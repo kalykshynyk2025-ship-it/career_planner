@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Plus, ExternalLink, Trash2, CheckCircle2, Clock, Check, Edit3, X, Save } from 'lucide-react';
 import { CareerState, CareerNewsletter } from '../types';
 import { TargetGoalBanner } from './TargetGoalBanner';
+import { ExportBoardButton } from './ExportBoardButton';
 
 interface NewslettersViewProps {
   state: CareerState;
@@ -182,7 +183,8 @@ export const NewslettersView: React.FC<NewslettersViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center space-x-3 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <ExportBoardButton state={state} boardType="newsletters" boardTitle="Доска №4" />
           <button
             onClick={() => setIsAdding(true)}
             className="flex-1 md:flex-none px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all shadow-xs"

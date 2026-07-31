@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { CareerState } from '../types';
 import { TargetGoalBanner } from './TargetGoalBanner';
+import { ExportBoardButton } from './ExportBoardButton';
 
 const AGILE_STEPS_INFO: Record<number, { title: string; purpose: string; outputs: string; board: string }> = {
   1: {
@@ -155,7 +156,13 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <ExportBoardButton 
+            state={state} 
+            boardType="agile_track" 
+            boardTitle="Agile-Трек" 
+            onOpenPdfModal={onOpenNotionExport}
+          />
           <button
             onClick={handleResetSteps}
             className="px-3.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-xl text-xs font-semibold cursor-pointer flex items-center space-x-1.5 transition-all"

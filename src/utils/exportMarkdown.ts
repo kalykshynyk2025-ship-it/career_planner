@@ -156,3 +156,125 @@ export const downloadMarkdownFile = (filename: string, content: string) => {
   URL.revokeObjectURL(url);
 };
 
+export const generateCriteriaBoardMarkdown = (state: CareerState): string => {
+  const criteria = state.notion_criteria || [];
+  return `# ДОСКА №1: КРИТЕРИИ ВЫБОРА КОМПАНИИ
+*Карьерная Стратегия: ${state.selected_position || 'Senior ML & DS Engineer'}*
+
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Всего критериев**: ${criteria.length}
+
+| # | Критерий | Статус | Приоритет | Категория | Подробное описание |
+| :--- | :--- | :---: | :--- | :--- | :--- |
+${criteria.map((c, i) => 
+  `| ${i + 1} | **${c.title}** | ${c.checked ? '[Включен]' : '[Исключен]'} | \`${c.priority || 'Обязательно'}\` | ${c.category} | ${c.description || '—'} |`
+).join('\n')}
+`;
+};
+
+export const generateCompaniesBoardMarkdown = (state: CareerState): string => {
+  const companies = state.selected_companies || [];
+  return `# ДОСКА №2: ТАРГЕТИРОВАННЫЙ СПИСОК КОМПАНИЙ
+*Карьерный Стек & Целевой Рынок: ${state.selected_market || 'РФ / Global Remote'}*
+
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Всего компаний**: ${companies.length}
+
+| # | Компания | Уровень / Страна | Стек Технологий | Визовая поддержка | Карьерная ссылка | Заметки |
+| :--- | :--- | :--- | :--- | :---: | :--- | :--- |
+${companies.map((c, i) => 
+  `| ${i + 1} | **${c.name}** | ${c.tier || c.country || 'РФ'} | ${c.techStack.join(', ')} | ${c.sponsorship ? 'Да' : 'Нет'} | ${c.careerLink ? `[Ссылка](${c.careerLink})` : '—'} | ${c.notes || '—'} |`
+).join('\n')}
+`;
+};
+
+export const generateVacanciesBoardMarkdown = (state: CareerState): string => {
+  const vacancies = state.selected_vacancies || [];
+  return `# ДОСКА №3: ATS ТРЕКЕР ВАКАНСИЙ (VACANCY PIPELINE)
+*Позиция: ${state.selected_position || 'Senior ML & DS Engineer'} | Доход: ${state.goals?.expectedSalary || '380 000 - 550 000 ₽'}*
+
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Всего вакансий в воронке**: ${vacancies.length}
+
+| # | Название Вакансии | Компания | Локация | Зарплатная вилка | Статус Воронки | ATS Match | Ссылка |
+| :--- | :--- | :--- | :--- | :--- | :---: | :---: | :--- |
+${vacancies.map((v, i) => 
+  `| ${i + 1} | **${v.title}** | ${v.company} | ${v.location} | ${formatSalaryWithCurrency(v.salaryRange, state.currency)} | \`${v.status || 'Saved'}\` | **${v.atsScore || 85}%** | ${v.link ? `[Ссылка](${v.link})` : '—'} |`
+).join('\n')}
+`;
+};
+
+export const generateNewslettersBoardMarkdown = (state: CareerState): string => {
+  const newsletters = state.newsletters || [];
+  return `# ДОСКА №4: КАРЬЕРНЫЕ РАССЫЛКИ И ДАЙДЖЕСТЫ
+*Мониторинг позиций и источников*
+
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Всего источников**: ${newsletters.length}
+
+| # | Источник / Канал | Компания / Сообщество | Частота | Статус Подписки | Ссылка |
+| :--- | :--- | :--- | :--- | :---: | :--- |
+${newsletters.map((n, i) => 
+  `| ${i + 1} | **${n.title}** | ${n.companyName} | ${n.frequency} | ${n.subscribed ? '[Активна]' : '[Пауза]'} | ${n.link ? `[Дайджест](${n.link})` : '—'} |`
+).join('\n')}
+`;
+};
+
+export const generateSwotBoardMarkdown = (state: CareerState): string => {
+  const swot = state.swot || { strengths: [], weaknesses: [], opportunities: [], threats: [] };
+  const swotAnswers = state.swot_answers || { strengths: [], weaknesses: [], opportunities: [], threats: [] };
+  
+  return `# ДОСКА №5: SWOT-АНАЛИЗ ПРОФИЛЯ И ЭКСПЕРТНЫЕ ОТВЕТЫ
+*Оценка сильных и слабых сторон, возможностей и рисков*
+
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}
+
+### 1. Сильные стороны (Strengths)
+${(swot.strengths || []).map(s => `- ${s}`).join('\n')}
+
+### 2. Слабые стороны (Weaknesses)
+${(swot.weaknesses || []).map(w => `- ${w}`).join('\n')}
+
+### 3. Рыночные возможности (Opportunities)
+${(swot.opportunities || []).map(o => `- ${o}`).join('\n')}
+
+### 4. Риски и барьеры (Threats)
+${(swot.threats || []).map(t => `- ${t}`).join('\n')}
+
+${(swotAnswers.strengths?.length || swotAnswers.weaknesses?.length || swotAnswers.opportunities?.length || swotAnswers.threats?.length) ? `
+### 5. Ответы на экспертные карьерные вопросы
+${[
+  ...(swotAnswers.strengths || []), 
+  ...(swotAnswers.weaknesses || []), 
+  ...(swotAnswers.opportunities || []), 
+  ...(swotAnswers.threats || [])
+].map(qa => `- **${qa.questionText}**\n  > *Ответ:* ${qa.answerText}`).join('\n\n')}
+` : ''}
+`;
+};
+
+export const generateAgileTrackMarkdown = (state: CareerState): string => {
+  const sanitizedCompletedSteps = Array.from(new Set(state.completed_steps || []))
+    .filter(s => typeof s === 'number' && s >= 1 && s <= 8)
+    .sort((a, b) => a - b);
+  const completedCount = sanitizedCompletedSteps.length;
+  const progressPercent = Math.min(100, Math.round((completedCount / 8) * 100));
+  const currentStepNum = Math.min(Math.max(state.current_step || 1, 1), 8);
+
+  return `# СТАТУС AGILE-ТРЕКА (8 ЭТАПОВ)
+*Карьерный спринт-поток*
+
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Общий прогресс**: ${completedCount} / 8 этапов (${progressPercent}%)  
+> **Текущий активный шаг**: #${currentStepNum}  
+> **Завершенные шаги**: ${sanitizedCompletedSteps.length > 0 ? sanitizedCompletedSteps.map(s => `#${s}`).join(', ') : 'Нет'}
+
+### Результаты выходов по шагам (Outputs Log):
+${Object.entries(state.stepOutputs || {}).length > 0 
+  ? Object.entries(state.stepOutputs)
+      .filter(([stepNum]) => Number(stepNum) >= 1 && Number(stepNum) <= 8)
+      .map(([stepNum, text]) => `#### Этап #${stepNum}\n${text}`).join('\n\n')
+  : '_Артефакты этапов обновлены в системе._'}
+`;
+};
+

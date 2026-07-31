@@ -14,6 +14,7 @@ import { Company, CareerState } from '../types';
 import { KnowledgeBaseModal } from './KnowledgeBaseModal';
 import { KNOWLEDGE_COMPANIES } from '../data/knowledgeBase';
 import { TargetGoalBanner } from './TargetGoalBanner';
+import { ExportBoardButton } from './ExportBoardButton';
 
 interface CompaniesViewProps {
   state: CareerState;
@@ -164,7 +165,8 @@ export const CompaniesView: React.FC<CompaniesViewProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ExportBoardButton state={state} boardType="companies" boardTitle="Доска №2" />
             <button
               onClick={() => setIsKbOpen(true)}
               className="px-3.5 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer"

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Vacancy, CareerState } from '../types';
 import { TargetGoalBanner } from './TargetGoalBanner';
+import { ExportBoardButton } from './ExportBoardButton';
 
 interface VacanciesViewProps {
   state: CareerState;
@@ -232,13 +233,16 @@ export const VacanciesView: React.FC<VacanciesViewProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={handleOpenAdd}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Добавить вакансию</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <ExportBoardButton state={state} boardType="vacancies" boardTitle="Доска №3" />
+            <button
+              onClick={handleOpenAdd}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Добавить вакансию</span>
+            </button>
+          </div>
         </div>
 
         {/* Quick Add Presets Bar */}

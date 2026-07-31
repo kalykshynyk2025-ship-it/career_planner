@@ -3,6 +3,7 @@ import { Compass, Sparkles, ZoomIn, ZoomOut, Grid, Move, Check, Edit3, ShieldAle
 import { CareerState, SwotDetailedAnswers } from '../types';
 import { KNOWLEDGE_SWOT_EXPERT_ANSWERS } from '../data/knowledgeBase';
 import { TargetGoalBanner } from './TargetGoalBanner';
+import { ExportBoardButton } from './ExportBoardButton';
 
 interface MiroSwotBoardViewProps {
   state: CareerState;
@@ -121,7 +122,8 @@ export const MiroSwotBoardView: React.FC<MiroSwotBoardViewProps> = ({
         </div>
 
         {/* Toolbar controls */}
-        <div className="flex items-center space-x-3 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <ExportBoardButton state={state} boardType="swot" boardTitle="Доска №5" />
           <div className="flex items-center space-x-1 bg-[var(--bg-main)] border border-[var(--color-border)] rounded-xl p-1">
             <button 
               onClick={() => setZoom(prev => Math.max(70, prev - 10))}

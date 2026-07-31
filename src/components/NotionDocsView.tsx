@@ -20,6 +20,7 @@ import { CareerState, NotionCriterion, ActiveView } from '../types';
 import { generateComprehensiveCareerMarkdown } from '../utils/exportMarkdown';
 import { CareerDocumentDesigner } from './CareerDocumentDesigner';
 import { INITIAL_CAREER_STATE } from '../data/workflow';
+import { ExportBoardButton } from './ExportBoardButton';
 
 interface NotionDocsViewProps {
   state: CareerState;
@@ -172,6 +173,13 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
               </button>
             </div>
 
+            <ExportBoardButton 
+              state={state} 
+              boardType="all" 
+              boardTitle="Все доски" 
+              onOpenPdfModal={onOpenNotionExport}
+              variant="primary"
+            />
             <button
               onClick={onOpenNotionExport}
               className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer shrink-0"

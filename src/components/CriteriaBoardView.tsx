@@ -4,6 +4,7 @@ import { CareerState, NotionCriterion } from '../types';
 import { KNOWLEDGE_CRITERIA } from '../data/knowledgeBase';
 import { KnowledgeBaseModal } from './KnowledgeBaseModal';
 import { TargetGoalBanner } from './TargetGoalBanner';
+import { ExportBoardButton } from './ExportBoardButton';
 
 interface CriteriaBoardViewProps {
   state: CareerState;
@@ -141,6 +142,7 @@ export const CriteriaBoardView: React.FC<CriteriaBoardViewProps> = ({
             <BookOpen className="w-4 h-4" />
             <span>База Знаний (200+)</span>
           </button>
+          <ExportBoardButton state={state} boardType="criteria" boardTitle="Доска №1" />
           <button
             onClick={() => setIsAdding(true)}
             className="px-3.5 py-2 bg-[var(--bg-card)] border border-[var(--color-border)] text-[var(--text-primary)] hover:bg-[var(--color-border)]/20 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all cursor-pointer"
