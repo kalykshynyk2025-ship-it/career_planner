@@ -4,6 +4,7 @@ import {
   Copy, 
   Check, 
   Printer, 
+  Download,
   ExternalLink, 
   ChevronDown, 
   ChevronUp, 
@@ -24,6 +25,7 @@ import {
 } from 'lucide-react';
 import { CareerState, ActiveView } from '../types';
 import { getCurrencySymbol, formatSalaryWithCurrency } from '../utils/currency';
+import { generateComprehensiveCareerMarkdown, downloadMarkdownFile } from '../utils/exportMarkdown';
 
 interface CareerDocumentDesignerProps {
   state: CareerState;
@@ -146,13 +148,26 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
 
             <button
               onClick={() => {
-                const fullText = Array.from({ length: 10 }, (_, i) => getSectionMarkdown(i + 1)).join('\n\n');
+                const fullText = generateComprehensiveCareerMarkdown(state);
                 copyToClipboard(fullText, 'all');
               }}
               className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold flex items-center space-x-1.5 transition-colors cursor-pointer shadow-xs"
             >
               {copiedAll ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-300" />}
-              <span>{copiedAll ? 'Скопировано!' : 'Скопировать всё'}</span>
+              <span>{copiedAll ? 'Скопировано!' : 'Скопировать все 13 досок'}</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const fullText = generateComprehensiveCareerMarkdown(state);
+                const filename = `career_strategy_consolidated_${new Date().toISOString().slice(0, 10)}.md`;
+                downloadMarkdownFile(filename, fullText);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md transition-all cursor-pointer"
+              title="Скачать все доски в один файл Markdown (.md)"
+            >
+              <Download className="w-4 h-4" />
+              <span>Скачать .md</span>
             </button>
 
             <button

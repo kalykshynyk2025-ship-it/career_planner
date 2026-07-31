@@ -14,36 +14,44 @@ export const generateComprehensiveCareerMarkdown = (state: CareerState): string 
                          (state.swot?.opportunities?.length || 0) + 
                          (state.swot?.threats?.length || 0);
 
-  return `# ИТОГОВЫЙ КАРЬЕРНЫЙ ДОКУМЕНТ И СТРАТЕГИЧЕСКИЙ ПЛАН
-*Полная консолидация всех 13 досок и разделов системы ${state.appName || 'ML & DS Career OS'}*
+  const completedCount = state.completed_steps?.length || 0;
+  const progressPercent = Math.round((completedCount / 13) * 100);
+
+  return `# ЕДИНЫЙ КАРЬЕРНЫЙ ДОКУМЕНТ И ИТОГОВАЯ СТРАТЕГИЯ
+*Консолидированный отчет по всем 13 доскам и артефактам системы ${state.appName || 'ML & DS Career OS'}*
 
 ---
 
-> **Дата формирования**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Главная Карьерная Цель**: ${state.goals?.primaryGoal || 'Переход на позицию Senior ML & DS Engineer'}  
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Основная Карьерная Цель**: ${state.goals?.primaryGoal || 'Переход на позицию Senior ML & DS Engineer'}  
+> **Целевая Роль**: ${state.selected_position || 'Senior ML & DS Engineer'} (Резерв: ${state.alternate_position || 'Lead Data Scientist'})  
 > **Грейд**: ${state.goals?.currentGrade || 'Middle+'} ➔ **${state.goals?.targetGrade || 'Senior ML / AI Architect'}**  
-> **Зарплатная вилка**: ${salaryFormatted} | **Рынок**: ${state.selected_market || 'РФ / Global Remote'}  
-> **Сроки реализации**: ${state.goals?.timeline || '3-6 месяцев'}  
+> **Финансовая Вилка**: ${salaryFormatted} (${state.currency || 'RUB'})  
+> **Рынок & Формат**: ${state.selected_market || 'РФ / Global Remote'}  
+> **Дедлайн поиска**: ${state.goals?.timeline || '3-6 месяцев'}  
+> **Общий Прогресс Agile-Трека**: ${completedCount} / 13 этапов (${progressPercent}%)  
 
 ---
 
-## 1. Параметры Профиля и Таргетинга (Настройки и Навыки)
+## 1. ПАРАМЕТРЫ ПРОФИЛЯ, ТАРГЕТИНГА И СТЕК
+*Базовые ориентиры, грейды и сопоставление навыков*
 
-| Параметр профиля | Значение |
+| Параметр Профиля | Значение |
 | :--- | :--- |
 | **Основная Должность** | **${state.selected_position || 'Senior ML & DS Engineer / AI Architect'}** |
-| **Запасная Должность** | **${state.alternate_position || 'Lead Data Scientist / RecSys Architect'}** |
+| **Запасная Роль** | ${state.alternate_position || 'Lead Data Scientist / RecSys Architect'} |
 | **Целевой Рынок** | ${state.selected_market || 'РФ / Global Remote'} |
-| **Ориентир по Зарплате** | ${salaryFormatted} |
-| **Валюта расчетов** | ${state.currency || 'RUB'} (${currencySymbol}) |
-| **Общий стек Hard Skills** | ${state.goals?.hardSkillsSummary || 'Python, PyTorch, LLM Fine-Tuning, MLOps, RAG, Distributed Training, Vector DBs, System Design'} |
-| **Общий стек Soft Skills** | ${state.goals?.softSkillsSummary || 'Technical Leadership, Agile/Scrum Mentorship, Stakeholder Management, Architecture Presentations'} |
+| **Ориентир по Доходу** | **${salaryFormatted}** |
+| **Валюта** | ${state.currency || 'RUB'} (${currencySymbol}) |
+| **Hard Skills Стек** | ${state.goals?.hardSkillsSummary || 'Python, PyTorch, LLM Fine-Tuning, MLOps, RAG, Distributed Training, Vector DBs, System Design'} |
+| **Soft Skills Стек** | ${state.goals?.softSkillsSummary || 'Technical Leadership, Agile/Scrum Mentorship, Stakeholder Management, Architecture Presentations'} |
 
 ---
 
-## 2. Доска №1: Критерии Выбора Компании (Notion Criteria)
+## 2. ДОСКА №1: КРИТЕРИИ ВЫБОРА КОМПАНИИ (NOTION CRITERIA)
+*Система фильтров и требований к потенциальному работодателю (${state.notion_criteria?.length || 0} критериев)*
 
-| # | Критерий | Статус | Приоритет | Категория | Описание |
+| # | Критерий | Статус | Приоритет | Категория | Подробности |
 | :--- | :--- | :---: | :--- | :--- | :--- |
 ${(state.notion_criteria || []).map((c, i) => 
   `| ${i + 1} | **${c.title}** | ${c.checked ? '[Включен]' : '[Исключен]'} | \`${c.priority || 'Обязательно'}\` | ${c.category} | ${c.description || '—'} |`
@@ -51,19 +59,21 @@ ${(state.notion_criteria || []).map((c, i) =>
 
 ---
 
-## 3. Доска №2: Таргетированный Список Компаний
+## 3. ДОСКА №2: ТАРГЕТИРОВАННЫЙ СПИСОК КОМПАНИЙ
+*Реестр целевых работодателей по уровням (${state.selected_companies?.length || 0} компаний)*
 
-| # | Компания | Локация | Стек технологий | Визовая поддержка | Ссылка | Заметки |
+| # | Компания | Уровень / Рынок | Стек Технологий | Визовая поддержка | Карьерная ссылка | Заметки |
 | :--- | :--- | :--- | :--- | :---: | :--- | :--- |
 ${(state.selected_companies || []).map((c, i) => 
-  `| ${i + 1} | **${c.name}** | ${c.country || 'РФ'} | ${c.techStack.join(', ')} | ${c.sponsorship ? 'Да' : 'Нет'} | ${c.careerLink ? `[Карьера](${c.careerLink})` : '—'} | ${c.notes || '—'} |`
+  `| ${i + 1} | **${c.name}** | ${c.tier || c.country || 'РФ'} | ${c.techStack.join(', ')} | ${c.sponsorship ? 'Да' : 'Нет'} | ${c.careerLink ? `[Ссылка](${c.careerLink})` : '—'} | ${c.notes || '—'} |`
 ).join('\n')}
 
 ---
 
-## 4. Доска №3: ATS Трекер Вакансий (Vacancy Pipeline)
+## 4. ДОСКА №3: ATS ТРЕКЕР ВАКАНСИЙ (VACANCY PIPELINE)
+*Воронка откликов и профилей вакансий (${state.selected_vacancies?.length || 0} позиций)*
 
-| # | Должность | Компания | Локация | Зарплата | Статус ATS | Совпадение | Ссылка |
+| # | Название Вакансии | Компания | Локация | Зарплатная вилка | Статус Воронки | ATS Match | Ссылка |
 | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :--- |
 ${(state.selected_vacancies || []).map((v, i) => 
   `| ${i + 1} | **${v.title}** | ${v.company} | ${v.location} | ${formatSalaryWithCurrency(v.salaryRange, state.currency)} | \`${v.status || 'Saved'}\` | **${v.atsScore || 85}%** | ${v.link ? `[Ссылка](${v.link})` : '—'} |`
@@ -71,9 +81,10 @@ ${(state.selected_vacancies || []).map((v, i) =>
 
 ---
 
-## 5. Доска №4: Карьерные Рассылки и Источники Вакансий
+## 5. ДОСКА №4: КАРЬЕРНЫЕ РАССЫЛКИ И ИСТОЧНИКИ ВАКАНСИЙ
+*Автоматический мониторинг дайджестов (${state.newsletters?.length || 0} источников)*
 
-| # | Канал / Рассылка | Компания | Частота | Статус Подписки | Ссылка |
+| # | Источник / Канал | Компания | Частота | Статус | Ссылка |
 | :--- | :--- | :--- | :--- | :---: | :--- |
 ${(state.newsletters || []).map((n, i) => 
   `| ${i + 1} | **${n.title}** | ${n.companyName} | ${n.frequency} | ${n.subscribed ? '[Активна]' : '[Пауза]'} | ${n.link ? `[Дайджест](${n.link})` : '—'} |`
@@ -81,9 +92,10 @@ ${(state.newsletters || []).map((n, i) =>
 
 ---
 
-## 6. Доска №5: Декомпозиция и Анализ Требований Вакансий
+## 6. ДОСКА №5: ДЕКОМПОЗИЦИЯ И АНАЛИЗ ТРЕБОВАНИЙ ВАКАНСИЙ
+*Разбор функциональных обязанностей и требований (${state.vacancy_analyses?.length || 0} элементов)*
 
-| # | Позиция / Компания | Требование / Обязанность | Тип | Статус владения | Способ достижения |
+| # | Вакансия / Компания | Требование или Обязанность | Тип | Статус Владения | План Достижения |
 | :--- | :--- | :--- | :--- | :---: | :--- |
 ${(state.vacancy_analyses || []).map((a, i) => 
   `| ${i + 1} | **${a.vacancyTitle}** (${a.company}) | ${a.item} | \`${a.type}\` | **${a.status}** | ${a.achievementMethod} |`
@@ -91,23 +103,23 @@ ${(state.vacancy_analyses || []).map((a, i) =>
 
 ---
 
-## 7. Доска №6: Матрица Навыков (Skills Matrix & Gap Analysis)
+## 7. ДОСКА №6: МАТРИЦА НАВЫКОВ И SKILL GAP АНАЛИЗ
 
-### 7.1. Подтвержденный стек навыков
-| Навык | Категория | Уровень владения | Доказательства / Опыт применения |
+### 7.1. Подтвержденный стек навыков (${state.skills?.length || 0} навыков)
+| Навык | Категория | Уровень | Доказательства / Опыт применения |
 | :--- | :--- | :--- | :--- |
 ${(state.skills || []).map(s => `| **${s.name}** | ${s.category} | \`${s.level}\` | ${s.evidence} |`).join('\n')}
 
-### 7.2. Пробелы в знаниях (Skill Gap Registry)
-| Недостающий навык | Приоритет | Сложность | Целевая дата | План устранения |
+### 7.2. Реестр пробелов (Skill Gap Registry, ${state.missing_skills?.length || 0} пробелов)
+| Пробел в знаниях | Приоритет | Сложность | Дедлайн | План Устранения |
 | :--- | :---: | :---: | :--- | :--- |
 ${(state.missing_skills || []).map(m => `| **${m.skillName}** | \`${m.priority}\` | ${m.effort} | ${m.targetDate} | ${m.actionPlan} |`).join('\n')}
 
 ---
 
-## 8. Доска №7: SWOT-Анализ Профиля и Экспертный Разбор
+## 8. ДОСКА №7: SWOT-АНАЛИЗ ПРОФИЛЯ И ЭКСПЕРТНЫЕ ОТВЕТЫ
 
-### Факторы SWOT-Матрицы (Всего элементов: ${swotTotalCount})
+### 8.1. Факторы SWOT-Матрицы (Элементов: ${swotTotalCount})
 
 - **Strengths (Сильные стороны)**:
 ${(state.swot?.strengths || []).map(s => `  - ${s}`).join('\n')}
@@ -121,16 +133,22 @@ ${(state.swot?.opportunities || []).map(o => `  - ${o}`).join('\n')}
 - **Threats (Риски и барьеры)**:
 ${(state.swot?.threats || []).map(t => `  - ${t}`).join('\n')}
 
-${swotAnswers.strengths?.length ? `
-### Зафиксированные ответы на экспертные вопросы:
-${[...(swotAnswers.strengths || []), ...(swotAnswers.weaknesses || []), ...(swotAnswers.opportunities || []), ...(swotAnswers.threats || [])].map(qa => `- **${qa.questionText}**: ${qa.answerText}`).join('\n')}
+${(swotAnswers.strengths?.length || swotAnswers.weaknesses?.length || swotAnswers.opportunities?.length || swotAnswers.threats?.length) ? `
+### 8.2. Экспертные ответы на стратегические вопросы:
+${[
+  ...(swotAnswers.strengths || []), 
+  ...(swotAnswers.weaknesses || []), 
+  ...(swotAnswers.opportunities || []), 
+  ...(swotAnswers.threats || [])
+].map(qa => `- **${qa.questionText}**\n  > *Ответ:* ${qa.answerText}`).join('\n\n')}
 ` : ''}
 
 ---
 
-## 9. Доска №8: Agile Roadmap и Спринты (Q1-Q4)
+## 9. ДОСКА №8: AGILE ROADMAP И СПРИНТЫ (Q1-Q4)
+*Поквартальный план выполнения задач (${state.roadmap?.length || 0} задач)*
 
-| Спринт | Задача | Категория | Статус | Метрика готовности |
+| Спринт | Задача | Категория | Статус | Метрика Готовности (Done Criteria) |
 | :--- | :--- | :--- | :---: | :--- |
 ${(state.roadmap || []).map(r => 
   `| **${r.sprint}** | ${r.task} | ${r.category} | \`${r.status}\` | ${r.metric} |`
@@ -138,12 +156,34 @@ ${(state.roadmap || []).map(r =>
 
 ---
 
-## 10. Статус Agile Трека (13 Этапов Методологии)
+## 10. СТАТУС КОНСОЛИДАЦИИ AGILE-ТРЕКА (13 ЭТАПОВ)
 
 - **Текущий активный этап**: Шаг #${state.current_step}
-- **Завершенные этапы**: ${state.completed_steps.map(s => `#${s}`).join(', ')} (${Math.round((state.completed_steps.length / 13) * 100)}% завершено)
+- **Завершенные этапы**: ${state.completed_steps.map(s => `#${s}`).join(', ')} (${progressPercent}% завершено)
+
+### Результаты прохождения этапов (Outputs Log):
+${Object.entries(state.stepOutputs || {}).length > 0 
+  ? Object.entries(state.stepOutputs).map(([stepNum, text]) => `#### Этап #${stepNum}\n${text}`).join('\n\n')
+  : '_Все 13 этапов инициализированы и готовы к выгрузке._'}
 
 ---
-*Документ сгенерирован автоматически системой ${state.appName || 'ML & DS Career OS'}. Все данные консолидированы в стандарте Executive Report.*
+
+## 11. ИТОГОВЫЙ ПЛАН И РЕКОМЕНДАЦИИ
+- Все данные обновлены в реальном времени на основе текущего состояния досок.
+- Документ готов к выгрузке в PDF, экспорт в Notion или отправке ментору.
+*Документ сгенерирован автоматически системой ${state.appName || 'ML & DS Career OS'}.*
 `;
 };
+
+export const downloadMarkdownFile = (filename: string, content: string) => {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
