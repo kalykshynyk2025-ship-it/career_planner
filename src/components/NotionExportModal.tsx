@@ -50,7 +50,7 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
               <div className="flex items-center space-x-2">
                 <h2 className="font-bold text-white text-base">Экспорт единого карьерного документа</h2>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[10px] font-bold">
-                  Все 13 досок и блоков
+                  Все заполненные доски и блоки
                 </span>
               </div>
               <p className="text-xs text-slate-400">Форматированный стратегический отчет со всеми обновленными данными досок</p>

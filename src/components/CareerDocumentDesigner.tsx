@@ -13,19 +13,18 @@ import {
   Target, 
   Mail, 
   Sliders, 
-  Layers, 
-  Zap, 
   Compass, 
-  Award, 
   Coins, 
   CheckCircle2, 
   Sparkles,
-  Search,
-  BookOpen
+  RefreshCw,
+  FolderDown,
+  Trash2
 } from 'lucide-react';
 import { CareerState, ActiveView } from '../types';
 import { getCurrencySymbol, formatSalaryWithCurrency } from '../utils/currency';
 import { generateComprehensiveCareerMarkdown, downloadMarkdownFile } from '../utils/exportMarkdown';
+import { INITIAL_CAREER_STATE } from '../data/workflow';
 
 interface CareerDocumentDesignerProps {
   state: CareerState;
@@ -43,6 +42,12 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   const currencySymbol = getCurrencySymbol(state.currency || 'RUB');
   const salaryFormatted = formatSalaryWithCurrency(
@@ -65,8 +70,58 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
     }
   };
 
+  // Data Management Handlers requested by user
+  const handleRefreshData = () => {
+    if (onChangeState) {
+      onChangeState(prev => ({
+        ...prev,
+        // Trigger clean re-sync of counts & steps
+        completed_steps: Array.from(new Set(prev.completed_steps)).filter(s => s >= 1 && s <= 8)
+      }));
+      showToast('🔄 Данные всех заполненных досок обновлены и синхронизированы!');
+    }
+  };
+
+  const handleLoadFilledData = () => {
+    if (onChangeState) {
+      onChangeState(prev => ({
+        ...prev,
+        notion_criteria: INITIAL_CAREER_STATE.notion_criteria,
+        selected_companies: INITIAL_CAREER_STATE.selected_companies,
+        selected_vacancies: INITIAL_CAREER_STATE.selected_vacancies,
+        newsletters: INITIAL_CAREER_STATE.newsletters,
+        swot: INITIAL_CAREER_STATE.swot,
+        completed_steps: [1, 2, 3, 4, 5, 6, 7],
+        current_step: 8
+      }));
+      showToast('📥 Данные из всех заполненных досок успешно загружены!');
+    }
+  };
+
+  const handleClearOldData = () => {
+    if (window.confirm('Вы действительно хотите очистить старые данные и сбросить карточки досок?')) {
+      if (onChangeState) {
+        onChangeState(prev => ({
+          ...prev,
+          notion_criteria: [],
+          selected_companies: [],
+          selected_vacancies: [],
+          newsletters: [],
+          vacancy_analyses: [],
+          skills: [],
+          missing_skills: [],
+          roadmap: [],
+          swot: { strengths: [], weaknesses: [], opportunities: [], threats: [] },
+          completed_steps: [],
+          current_step: 1
+        }));
+        showToast('🧹 Старые данные досок очищены!');
+      }
+    }
+  };
+
   const completedStepsCount = state.completed_steps.length;
-  const progressPercent = Math.round((completedStepsCount / 13) * 100);
+  const progressPercent = Math.round((completedStepsCount / 8) * 100);
 
   // Helper markdown generation for specific sections
   const getSectionMarkdown = (sectionNum: number): string => {
@@ -74,23 +129,17 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
       case 1:
         return `## 1. Параметры Профиля и Таргетинга\n- Должность: ${state.selected_position || 'Senior ML & DS Engineer'}\n- Резервная роль: ${state.alternate_position || 'Lead Data Scientist'}\n- Целевой рынок: ${state.selected_market || 'РФ / Global Remote'}\n- Доход: ${salaryFormatted}\n- Hard Skills: ${state.goals?.hardSkillsSummary}\n- Soft Skills: ${state.goals?.softSkillsSummary}`;
       case 2:
-        return `## 2. Критерии выбора компании\n` + (state.notion_criteria || []).map(c => `- [${c.checked ? 'Включен' : 'Исключен'}] ${c.title} (${c.priority}) - ${c.category}: ${c.description}`).join('\n');
+        return `## 2. Доска №1: Критерии выбора компании\n` + (state.notion_criteria || []).map(c => `- [${c.checked ? 'Включен' : 'Исключен'}] ${c.title} (${c.priority}) - ${c.category}: ${c.description}`).join('\n');
       case 3:
-        return `## 3. Целевые компании\n` + (state.selected_companies || []).map(c => `- ${c.name} | ${c.country} | Стек: ${c.techStack.join(', ')} | Виза: ${c.sponsorship ? 'Да' : 'Нет'}`).join('\n');
+        return `## 3. Доска №2: Целевые компании\n` + (state.selected_companies || []).map(c => `- ${c.name} | ${c.country} | Стек: ${c.techStack.join(', ')} | Виза: ${c.sponsorship ? 'Да' : 'Нет'}`).join('\n');
       case 4:
-        return `## 4. ATS Трекер Вакансий\n` + (state.selected_vacancies || []).map(v => `- ${v.title} в ${v.company} (${v.location}) | Вилка: ${formatSalaryWithCurrency(v.salaryRange, state.currency)} | Статус: ${v.status} | Match: ${v.atsScore}%`).join('\n');
+        return `## 4. Доска №3: ATS Трекер Вакансий\n` + (state.selected_vacancies || []).map(v => `- ${v.title} в ${v.company} (${v.location}) | Вилка: ${formatSalaryWithCurrency(v.salaryRange, state.currency)} | Статус: ${v.status} | Match: ${v.atsScore}%`).join('\n');
       case 5:
-        return `## 5. Карьерные рассылки\n` + (state.newsletters || []).map(n => `- ${n.title} (${n.companyName}) | Частота: ${n.frequency} | Статус: ${n.subscribed ? 'Активна' : 'Пауза'}`).join('\n');
+        return `## 5. Доска №4: Карьерные рассылки\n` + (state.newsletters || []).map(n => `- ${n.title} (${n.companyName}) | Частота: ${n.frequency} | Статус: ${n.subscribed ? 'Активна' : 'Пауза'}`).join('\n');
       case 6:
-        return `## 6. Декомпозиция требований вакансий\n` + (state.vacancy_analyses || []).map(a => `- ${a.vacancyTitle} (${a.company}): ${a.item} [${a.type}] -> Статус: ${a.status} (${a.achievementMethod})`).join('\n');
+        return `## 6. Доска №5: SWOT-Анализ Профиля\nСильные стороны: ${state.swot?.strengths.join(', ')}\nСлабые стороны: ${state.swot?.weaknesses.join(', ')}\nВозможности: ${state.swot?.opportunities.join(', ')}\nУгрозы: ${state.swot?.threats.join(', ')}`;
       case 7:
-        return `## 7. Матрица навыков & Gap Анализ\nНавыки:\n` + (state.skills || []).map(s => `- ${s.name} (${s.category}): ${s.level} | ${s.evidence}`).join('\n') + `\n\nGap Реестр:\n` + (state.missing_skills || []).map(m => `- ${m.skillName} [Приоритет: ${m.priority}] -> План: ${m.actionPlan}`).join('\n');
-      case 8:
-        return `## 8. SWOT-Анализ Профиля\nСильные стороны: ${state.swot?.strengths.join(', ')}\nСлабые стороны: ${state.swot?.weaknesses.join(', ')}\nВозможности: ${state.swot?.opportunities.join(', ')}\nУгрозы: ${state.swot?.threats.join(', ')}`;
-      case 9:
-        return `## 9. Agile Roadmap (Q1-Q4)\n` + (state.roadmap || []).map(r => `- [${r.status}] ${r.sprint}: ${r.task} (${r.category}) - Метрика: ${r.metric}`).join('\n');
-      case 10:
-        return `## 10. Статус Agile Трека\n- Завершено шагов: ${completedStepsCount} из 13 (${progressPercent}%)\n- Завершенные этапы: ${state.completed_steps.map(s => `#${s}`).join(', ')}`;
+        return `## 7. Статус Agile Трека\n- Завершено шагов: ${completedStepsCount} из 8 (${progressPercent}%)\n- Завершенные этапы: ${state.completed_steps.map(s => `#${s}`).join(', ')}`;
       default:
         return '';
     }
@@ -98,6 +147,14 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
 
   return (
     <div className="space-y-6 text-[var(--text-primary)]">
+
+      {/* Toast notification */}
+      {toastMessage && (
+        <div className="fixed top-5 right-5 z-50 px-4 py-3 rounded-2xl bg-emerald-600 text-white font-semibold text-xs shadow-2xl flex items-center space-x-2 animate-bounce">
+          <CheckCircle2 className="w-4 h-4" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
       {/* Main Executive Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 text-white rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl">
@@ -114,7 +171,7 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
                   EXECUTIVE CAREER REPORT
                 </span>
                 <span className="text-[11px] text-slate-400 font-medium">
-                  Консолидация 13 Досок
+                  Консолидация Досок & Блоков
                 </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black text-white mt-1 tracking-tight">
@@ -154,7 +211,7 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
               className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold flex items-center space-x-1.5 transition-colors cursor-pointer shadow-xs"
             >
               {copiedAll ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-300" />}
-              <span>{copiedAll ? 'Скопировано!' : 'Скопировать все 13 досок'}</span>
+              <span>{copiedAll ? 'Скопировано!' : 'Скопировать все'}</span>
             </button>
 
             <button
@@ -178,6 +235,41 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
               <span>Экспорт в PDF</span>
             </button>
 
+          </div>
+        </div>
+
+        {/* DATA MANAGEMENT ACTIONS TOOLBAR (New Requested Buttons) */}
+        <div className="pt-4 pb-2 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+          <div className="text-xs text-slate-400 font-semibold flex items-center space-x-2">
+            <span>Управление данными досок:</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleRefreshData}
+              className="px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-xl text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition-all"
+              title="Обновить данные досок и пересчитать артефакты"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-blue-400" />
+              <span>🔄 Обновить данные</span>
+            </button>
+
+            <button
+              onClick={handleLoadFilledData}
+              className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition-all"
+              title="Загрузить заполненные списки досок (Критерии, Компании, Вакансии, Рассылки, SWOT)"
+            >
+              <FolderDown className="w-3.5 h-3.5 text-emerald-400" />
+              <span>📥 Загрузить заполненные доски</span>
+            </button>
+
+            <button
+              onClick={handleClearOldData}
+              className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-bold flex items-center space-x-1.5 cursor-pointer transition-all"
+              title="Очистить старые записи досок"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+              <span>🧹 Очистить старые данные</span>
+            </button>
           </div>
         </div>
 
@@ -229,7 +321,7 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             </span>
             <div className="flex items-center justify-between text-sm font-bold text-white">
-              <span>{completedStepsCount} / 13 шагов</span>
+              <span>{completedStepsCount} / 8 шагов</span>
               <span className="text-emerald-400">{progressPercent}%</span>
             </div>
             <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden mt-1">
@@ -489,128 +581,16 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
       </DesignerBlock>
 
 
-      {/* ---------------- BLOCK 6: Vacancy Requirements Decomposition ---------------- */}
+      {/* ---------------- BLOCK 6: SWOT Matrix & Expert Q&A ---------------- */}
       <DesignerBlock
         num="06"
-        title="Доска №5: Декомпозиция & Анализ Требований Вакансий"
-        subtitle="Детальный разбор обязанностей и сопоставление со стеком"
-        icon={<Search className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />}
+        title="Доска №5: SWOT-Анализ Профиля & Экспертные Ответы"
+        subtitle="Стратегическая матрица сильных и слабых сторон, возможностей и рисков"
+        icon={<Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />}
         isCollapsed={!!collapsedSections['6']}
         onToggle={() => toggleSection('6')}
         onCopy={() => copyToClipboard(getSectionMarkdown(6), '6')}
         isCopied={copiedSection === '6'}
-        onNavigate={onSelectView ? () => onSelectView('vacancy_analysis') : undefined}
-        navigateLabel="Доска Анализа Требований"
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-secondary)] font-bold">
-                <th className="py-2.5 px-3">#</th>
-                <th className="py-2.5 px-3">Должность & Компания</th>
-                <th className="py-2.5 px-3">Требование</th>
-                <th className="py-2.5 px-3">Тип</th>
-                <th className="py-2.5 px-3">Статус Владения</th>
-                <th className="py-2.5 px-3">План Реализации</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
-              {(state.vacancy_analyses || []).map((a, i) => (
-                <tr key={a.id} className="hover:bg-[var(--bg-hover-sidebar)] transition-colors">
-                  <td className="py-2 px-3 text-[var(--text-secondary)] font-bold">{i + 1}</td>
-                  <td className="py-2 px-3 font-bold text-[var(--text-primary)]">{a.vacancyTitle} ({a.company})</td>
-                  <td className="py-2 px-3 text-[var(--text-primary)]">{a.item}</td>
-                  <td className="py-2 px-3 font-semibold text-[var(--text-secondary)]">[{a.type}]</td>
-                  <td className="py-2 px-3">
-                    <span className="px-2 py-0.5 rounded bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold text-[10px]">
-                      {a.status}
-                    </span>
-                  </td>
-                  <td className="py-2 px-3 text-[var(--text-secondary)]">{a.achievementMethod}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </DesignerBlock>
-
-
-      {/* ---------------- BLOCK 7: Skills Matrix & Gap Analysis ---------------- */}
-      <DesignerBlock
-        num="07"
-        title="Доска №6: Матрица Навыков & Skill Gap Реестр"
-        subtitle="Подтвержденные hard/soft навыки и приоритезированный реестр пробелов"
-        icon={<Layers className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
-        isCollapsed={!!collapsedSections['7']}
-        onToggle={() => toggleSection('7')}
-        onCopy={() => copyToClipboard(getSectionMarkdown(7), '7')}
-        isCopied={copiedSection === '7'}
-        onNavigate={onSelectView ? () => onSelectView('skills') : undefined}
-        navigateLabel="Матрица Навыков"
-      >
-        <div className="space-y-4">
-          <div>
-            <h4 className="font-bold text-xs text-[var(--text-primary)] mb-2 flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Подтвержденный Стек Навыков ({state.skills.length})</span>
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-              {state.skills.map(s => (
-                <div key={s.id} className="p-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--color-border)] space-y-1">
-                  <div className="flex items-center justify-between font-bold">
-                    <span className="text-[var(--text-primary)]">{s.name}</span>
-                    <span className="text-[10px] text-emerald-600 font-bold">[{s.level}]</span>
-                  </div>
-                  <p className="text-[10px] text-[var(--text-secondary)] line-clamp-1">{s.evidence}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="pt-3 border-t border-[var(--color-border)]">
-            <h4 className="font-bold text-xs text-[var(--text-primary)] mb-2 flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-              <span>Реестр Пробелов (Skill Gap Analysis)</span>
-            </h4>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-secondary)] font-bold">
-                    <th className="py-2 px-3">Недостающий Навык</th>
-                    <th className="py-2 px-3">Приоритет</th>
-                    <th className="py-2 px-3">Сложность</th>
-                    <th className="py-2 px-3">Дедлайн</th>
-                    <th className="py-2 px-3">План Устранения</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--color-border)]">
-                  {state.missing_skills.map(m => (
-                    <tr key={m.id} className="hover:bg-[var(--bg-hover-sidebar)] transition-colors">
-                      <td className="py-2 px-3 font-bold text-[var(--text-primary)]">{m.skillName}</td>
-                      <td className="py-2 px-3 font-semibold text-rose-500">[{m.priority}]</td>
-                      <td className="py-2 px-3 text-[var(--text-secondary)]">{m.effort}</td>
-                      <td className="py-2 px-3 text-[var(--text-secondary)]">{m.targetDate}</td>
-                      <td className="py-2 px-3 text-[var(--text-secondary)]">{m.actionPlan}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </DesignerBlock>
-
-
-      {/* ---------------- BLOCK 8: SWOT Matrix & Expert Q&A ---------------- */}
-      <DesignerBlock
-        num="08"
-        title="Доска №7: SWOT-Анализ Профиля & Экспертные Ответы"
-        subtitle="Стратегическая матрица сильных и слабых сторон, возможностей и рисков"
-        icon={<Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />}
-        isCollapsed={!!collapsedSections['8']}
-        onToggle={() => toggleSection('8')}
-        onCopy={() => copyToClipboard(getSectionMarkdown(8), '8')}
-        isCopied={copiedSection === '8'}
         onNavigate={onSelectView ? () => onSelectView('swot_miro') : undefined}
         navigateLabel="SWOT-Доска"
       >
@@ -666,64 +646,16 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
       </DesignerBlock>
 
 
-      {/* ---------------- BLOCK 9: Roadmap & Sprints ---------------- */}
+      {/* ---------------- BLOCK 7: Agile Consolidation Status ---------------- */}
       <DesignerBlock
-        num="09"
-        title="Доска №8: Agile Roadmap & Спринты (Q1-Q4)"
-        subtitle="Поквартальный план выполнения задач с метриками приемки"
-        icon={<Compass className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
-        isCollapsed={!!collapsedSections['9']}
-        onToggle={() => toggleSection('9')}
-        onCopy={() => copyToClipboard(getSectionMarkdown(9), '9')}
-        isCopied={copiedSection === '9'}
-        onNavigate={onSelectView ? () => onSelectView('roadmap_kanban') : undefined}
-        navigateLabel="Roadmap Kanban"
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-secondary)] font-bold">
-                <th className="py-2.5 px-3">Спринт</th>
-                <th className="py-2.5 px-3">Задача</th>
-                <th className="py-2.5 px-3">Категория</th>
-                <th className="py-2.5 px-3">Статус</th>
-                <th className="py-2.5 px-3">Метрика Готовности</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--color-border)]">
-              {state.roadmap.map(r => (
-                <tr key={r.id} className="hover:bg-[var(--bg-hover-sidebar)] transition-colors">
-                  <td className="py-2 px-3 font-bold text-[var(--text-primary)]">[{r.sprint}]</td>
-                  <td className="py-2 px-3 text-[var(--text-primary)] font-semibold">{r.task}</td>
-                  <td className="py-2 px-3 text-[var(--text-secondary)]">{r.category}</td>
-                  <td className="py-2 px-3">
-                    <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
-                      r.status === 'Done' 
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' 
-                        : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                    }`}>
-                      [{r.status}]
-                    </span>
-                  </td>
-                  <td className="py-2 px-3 text-[var(--text-secondary)]">{r.metric}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </DesignerBlock>
-
-
-      {/* ---------------- BLOCK 10: Agile Consolidation Status ---------------- */}
-      <DesignerBlock
-        num="10"
-        title="Статус Консолидации Agile-Трека (13 Этапов)"
+        num="07"
+        title="Статус Консолидации Agile-Трека (8 Этапов)"
         subtitle="Итоговая готовность артефактов и контроль выполнения методики"
         icon={<CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
-        isCollapsed={!!collapsedSections['10']}
-        onToggle={() => toggleSection('10')}
-        onCopy={() => copyToClipboard(getSectionMarkdown(10), '10')}
-        isCopied={copiedSection === '10'}
+        isCollapsed={!!collapsedSections['7']}
+        onToggle={() => toggleSection('7')}
+        onCopy={() => copyToClipboard(getSectionMarkdown(7), '7')}
+        isCopied={copiedSection === '7'}
         onNavigate={onSelectView ? () => onSelectView('agile_track') : undefined}
         navigateLabel="Agile Трек"
       >
@@ -735,12 +667,12 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
             </div>
             <div>
               <span className="font-bold text-[var(--text-primary)]">Пройдено: </span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{completedStepsCount} из 13 этапов</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{completedStepsCount} из 8 этапов</span>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            {Array.from({ length: 13 }, (_, i) => i + 1).map(stepNum => {
+            {Array.from({ length: 8 }, (_, i) => i + 1).map(stepNum => {
               const isDone = state.completed_steps.includes(stepNum);
               const isActive = state.current_step === stepNum;
 

@@ -15,10 +15,10 @@ export const generateComprehensiveCareerMarkdown = (state: CareerState): string 
                          (state.swot?.threats?.length || 0);
 
   const completedCount = state.completed_steps?.length || 0;
-  const progressPercent = Math.round((completedCount / 13) * 100);
+  const progressPercent = Math.round((completedCount / 8) * 100);
 
   return `# ЕДИНЫЙ КАРЬЕРНЫЙ ДОКУМЕНТ И ИТОГОВАЯ СТРАТЕГИЯ
-*Консолидированный отчет по всем 13 доскам и артефактам системы ${state.appName || 'ML & DS Career OS'}*
+*Консолидированный отчет по всем заполненным доскам и артефактам системы ${state.appName || 'ML & DS Career OS'}*
 
 ---
 
@@ -29,7 +29,7 @@ export const generateComprehensiveCareerMarkdown = (state: CareerState): string 
 > **Финансовая Вилка**: ${salaryFormatted} (${state.currency || 'RUB'})  
 > **Рынок & Формат**: ${state.selected_market || 'РФ / Global Remote'}  
 > **Дедлайн поиска**: ${state.goals?.timeline || '3-6 месяцев'}  
-> **Общий Прогресс Agile-Трека**: ${completedCount} / 13 этапов (${progressPercent}%)  
+> **Общий Прогресс Agile-Трека**: ${completedCount} / 8 этапов (${progressPercent}%)  
 
 ---
 
@@ -92,34 +92,8 @@ ${(state.newsletters || []).map((n, i) =>
 
 ---
 
-## 6. ДОСКА №5: ДЕКОМПОЗИЦИЯ И АНАЛИЗ ТРЕБОВАНИЙ ВАКАНСИЙ
-*Разбор функциональных обязанностей и требований (${state.vacancy_analyses?.length || 0} элементов)*
-
-| # | Вакансия / Компания | Требование или Обязанность | Тип | Статус Владения | План Достижения |
-| :--- | :--- | :--- | :--- | :---: | :--- |
-${(state.vacancy_analyses || []).map((a, i) => 
-  `| ${i + 1} | **${a.vacancyTitle}** (${a.company}) | ${a.item} | \`${a.type}\` | **${a.status}** | ${a.achievementMethod} |`
-).join('\n')}
-
----
-
-## 7. ДОСКА №6: МАТРИЦА НАВЫКОВ И SKILL GAP АНАЛИЗ
-
-### 7.1. Подтвержденный стек навыков (${state.skills?.length || 0} навыков)
-| Навык | Категория | Уровень | Доказательства / Опыт применения |
-| :--- | :--- | :--- | :--- |
-${(state.skills || []).map(s => `| **${s.name}** | ${s.category} | \`${s.level}\` | ${s.evidence} |`).join('\n')}
-
-### 7.2. Реестр пробелов (Skill Gap Registry, ${state.missing_skills?.length || 0} пробелов)
-| Пробел в знаниях | Приоритет | Сложность | Дедлайн | План Устранения |
-| :--- | :---: | :---: | :--- | :--- |
-${(state.missing_skills || []).map(m => `| **${m.skillName}** | \`${m.priority}\` | ${m.effort} | ${m.targetDate} | ${m.actionPlan} |`).join('\n')}
-
----
-
-## 8. ДОСКА №7: SWOT-АНАЛИЗ ПРОФИЛЯ И ЭКСПЕРТНЫЕ ОТВЕТЫ
-
-### 8.1. Факторы SWOT-Матрицы (Элементов: ${swotTotalCount})
+## 6. ДОСКА №5: SWOT-АНАЛИЗ ПРОФИЛЯ И ЭКСПЕРТНЫЕ ОТВЕТЫ
+*Стратегическая оценка профиля (Факторов: ${swotTotalCount})*
 
 - **Strengths (Сильные стороны)**:
 ${(state.swot?.strengths || []).map(s => `  - ${s}`).join('\n')}
@@ -134,7 +108,7 @@ ${(state.swot?.opportunities || []).map(o => `  - ${o}`).join('\n')}
 ${(state.swot?.threats || []).map(t => `  - ${t}`).join('\n')}
 
 ${(swotAnswers.strengths?.length || swotAnswers.weaknesses?.length || swotAnswers.opportunities?.length || swotAnswers.threats?.length) ? `
-### 8.2. Экспертные ответы на стратегические вопросы:
+### Экспертные ответы на стратегические вопросы:
 ${[
   ...(swotAnswers.strengths || []), 
   ...(swotAnswers.weaknesses || []), 
@@ -145,18 +119,7 @@ ${[
 
 ---
 
-## 9. ДОСКА №8: AGILE ROADMAP И СПРИНТЫ (Q1-Q4)
-*Поквартальный план выполнения задач (${state.roadmap?.length || 0} задач)*
-
-| Спринт | Задача | Категория | Статус | Метрика Готовности (Done Criteria) |
-| :--- | :--- | :--- | :---: | :--- |
-${(state.roadmap || []).map(r => 
-  `| **${r.sprint}** | ${r.task} | ${r.category} | \`${r.status}\` | ${r.metric} |`
-).join('\n')}
-
----
-
-## 10. СТАТУС КОНСОЛИДАЦИИ AGILE-ТРЕКА (13 ЭТАПОВ)
+## 7. СТАТУС КОНСОЛИДАЦИИ AGILE-ТРЕКА (8 ЭТАПОВ)
 
 - **Текущий активный этап**: Шаг #${state.current_step}
 - **Завершенные этапы**: ${state.completed_steps.map(s => `#${s}`).join(', ')} (${progressPercent}% завершено)
@@ -164,12 +127,12 @@ ${(state.roadmap || []).map(r =>
 ### Результаты прохождения этапов (Outputs Log):
 ${Object.entries(state.stepOutputs || {}).length > 0 
   ? Object.entries(state.stepOutputs).map(([stepNum, text]) => `#### Этап #${stepNum}\n${text}`).join('\n\n')
-  : '_Все 13 этапов инициализированы и готовы к выгрузке._'}
+  : '_Все 8 этапов инициализированы и готовы к выгрузке._'}
 
 ---
 
-## 11. ИТОГОВЫЙ ПЛАН И РЕКОМЕНДАЦИИ
-- Все данные обновлены в реальном времени на основе текущего состояния досок.
+## 8. ИТОГОВЫЙ ПЛАН И РЕКОМЕНДАЦИИ
+- Все данные обновлены в реальном времени на основе текущего состояния заполненных досок.
 - Документ готов к выгрузке в PDF, экспорт в Notion или отправке ментору.
 *Документ сгенерирован автоматически системой ${state.appName || 'ML & DS Career OS'}.*
 `;

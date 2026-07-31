@@ -11,12 +11,15 @@ import {
   Trash2, 
   Edit2, 
   Filter,
-  CheckCircle2
+  CheckCircle2,
+  RefreshCw,
+  FolderDown
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { CareerState, NotionCriterion, ActiveView } from '../types';
 import { generateComprehensiveCareerMarkdown } from '../utils/exportMarkdown';
 import { CareerDocumentDesigner } from './CareerDocumentDesigner';
+import { INITIAL_CAREER_STATE } from '../data/workflow';
 
 interface NotionDocsViewProps {
   state: CareerState;
@@ -96,46 +99,118 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleRefreshData = () => {
+    onChangeState(prev => ({
+      ...prev,
+      completed_steps: Array.from(new Set(prev.completed_steps)).filter(s => s >= 1 && s <= 8)
+    }));
+  };
+
+  const handleLoadFilledData = () => {
+    onChangeState(prev => ({
+      ...prev,
+      notion_criteria: INITIAL_CAREER_STATE.notion_criteria,
+      selected_companies: INITIAL_CAREER_STATE.selected_companies,
+      selected_vacancies: INITIAL_CAREER_STATE.selected_vacancies,
+      newsletters: INITIAL_CAREER_STATE.newsletters,
+      swot: INITIAL_CAREER_STATE.swot,
+      completed_steps: [1, 2, 3, 4, 5, 6, 7],
+      current_step: 8
+    }));
+  };
+
+  const handleClearOldData = () => {
+    if (window.confirm('Вы действительно хотите очистить старые данные всех досок?')) {
+      onChangeState(prev => ({
+        ...prev,
+        notion_criteria: [],
+        selected_companies: [],
+        selected_vacancies: [],
+        newsletters: [],
+        vacancy_analyses: [],
+        skills: [],
+        missing_skills: [],
+        roadmap: [],
+        swot: { strengths: [], weaknesses: [], opportunities: [], threats: [] },
+        completed_steps: [],
+        current_step: 1
+      }));
+    }
+  };
+
   return (
     <div className="space-y-6">
       
       {/* View Header Tabs */}
-      <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-            <FileText className="w-5 h-5" />
+      <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-[var(--text-primary)]">Документ & Экспорт в PDF</h2>
+              <p className="text-xs text-[var(--text-secondary)]">
+                Интерактивная доска критериев и генерация итогового PDF отчета
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-base font-bold text-[var(--text-primary)]">Документ & Экспорт в PDF</h2>
-            <p className="text-xs text-[var(--text-secondary)]">
-              Интерактивная доска критериев и генерация итогового PDF отчета
-            </p>
+
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <div className="bg-[var(--bg-main)] border border-[var(--color-border)] rounded-xl p-1 flex space-x-1 w-full sm:w-auto text-xs font-semibold">
+              <button
+                onClick={() => setActiveTab('checklist')}
+                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${activeTab === 'checklist' ? 'bg-blue-600 text-white shadow-xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+              >
+                Доска критериев ({criteria.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('full_doc')}
+                className={`px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${activeTab === 'full_doc' ? 'bg-blue-600 text-white shadow-xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+              >
+                Итоговый Документ
+              </button>
+            </div>
+
+            <button
+              onClick={onOpenNotionExport}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer shrink-0"
+            >
+              <Download className="w-4 h-4" />
+              <span>Экспорт в PDF</span>
+            </button>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <div className="bg-[var(--bg-main)] border border-[var(--color-border)] rounded-xl p-1 flex space-x-1 w-full sm:w-auto text-xs font-semibold">
+        {/* Action Buttons for Data Sync / Load / Clear */}
+        <div className="pt-2 border-t border-[var(--color-border)] flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span className="text-[var(--text-secondary)] font-semibold">Управление данными досок:</span>
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => setActiveTab('checklist')}
-              className={`px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${activeTab === 'checklist' ? 'bg-blue-600 text-white shadow-xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+              onClick={handleRefreshData}
+              className="px-2.5 py-1 bg-blue-600/10 hover:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-lg font-semibold flex items-center space-x-1 cursor-pointer"
+              title="Обновить текущие данные досок"
             >
-              Доска критериев ({criteria.length})
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Обновить данные</span>
             </button>
             <button
-              onClick={() => setActiveTab('full_doc')}
-              className={`px-3 py-1.5 rounded-lg cursor-pointer transition-colors ${activeTab === 'full_doc' ? 'bg-blue-600 text-white shadow-xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+              onClick={handleLoadFilledData}
+              className="px-2.5 py-1 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-lg font-semibold flex items-center space-x-1 cursor-pointer"
+              title="Загрузить готовые данные из заполненных досок"
             >
-              Итоговый Документ
+              <FolderDown className="w-3.5 h-3.5" />
+              <span>Загрузить из заполненных досок</span>
+            </button>
+            <button
+              onClick={handleClearOldData}
+              className="px-2.5 py-1 bg-rose-600/10 hover:bg-rose-600/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-lg font-semibold flex items-center space-x-1 cursor-pointer"
+              title="Очистить старые карточки досок"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Очистить старые данные</span>
             </button>
           </div>
-
-          <button
-            onClick={onOpenNotionExport}
-            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer shrink-0"
-          >
-            <Download className="w-4 h-4" />
-            <span>Экспорт в PDF</span>
-          </button>
         </div>
       </div>
 

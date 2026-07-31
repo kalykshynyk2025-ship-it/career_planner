@@ -81,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const companiesCount = state.selected_companies?.length || 0;
   const vacanciesCount = state.selected_vacancies?.length || 0;
   const completedCount = state.completed_steps?.length || 0;
-  const progressPercent = Math.round((completedCount / 13) * 100);
+  const progressPercent = Math.round((completedCount / 8) * 100);
 
   const navItems: Array<{
     id: ActiveView;
