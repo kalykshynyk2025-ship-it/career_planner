@@ -92,7 +92,7 @@ export const MiroSwotBoardView: React.FC<MiroSwotBoardViewProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div id="board-swot-view" className="space-y-6">
       
       {/* Target Goal Banner */}
       <TargetGoalBanner 

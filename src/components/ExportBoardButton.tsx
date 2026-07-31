@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, FileText, Check, Copy, Printer, Layers, ChevronDown } from 'lucide-react';
+import { Download, FileText, Check, Copy, Printer, Layers, ChevronDown, Image, ExternalLink, Loader2 } from 'lucide-react';
 import { CareerState } from '../types';
 import {
   downloadMarkdownFile,
@@ -11,6 +11,7 @@ import {
   generateAgileTrackMarkdown,
   generateComprehensiveCareerMarkdown
 } from '../utils/exportMarkdown';
+import { exportElementToPng, exportAllBoardElementsToPng } from '../utils/exportPng';
 
 export type BoardType = 'criteria' | 'companies' | 'vacancies' | 'newsletters' | 'swot' | 'agile_track' | 'all';
 
@@ -33,6 +34,7 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isExportingPng, setIsExportingPng] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,6 +46,18 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const getElementIdForBoard = (type: BoardType): string => {
+    switch (type) {
+      case 'criteria': return 'board-criteria-view';
+      case 'companies': return 'board-companies-view';
+      case 'vacancies': return 'board-vacancies-view';
+      case 'newsletters': return 'board-newsletters-view';
+      case 'swot': return 'board-swot-view';
+      case 'agile_track': return 'board-agile-view';
+      case 'all': default: return 'board-doc-view';
+    }
+  };
 
   const getBoardMarkdown = (type: BoardType): { content: string; filename: string; title: string } => {
     const dateStr = new Date().toISOString().slice(0, 10);
@@ -94,6 +108,25 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
     }
   };
 
+  const handleDownloadSinglePng = async () => {
+    setIsExportingPng(true);
+    const targetId = getElementIdForBoard(boardType);
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const filename = `${boardType}_board_${dateStr}.png`;
+    
+    // Fallback if full board element not found, export main content block
+    await exportElementToPng(targetId, filename, { pixelRatio: 2 });
+    setIsExportingPng(false);
+    setIsOpen(false);
+  };
+
+  const handleDownloadAllPngs = async () => {
+    setIsExportingPng(true);
+    await exportAllBoardElementsToPng(state.appName);
+    setIsExportingPng(false);
+    setIsOpen(false);
+  };
+
   const handleDownloadSingle = () => {
     const { content, filename } = getBoardMarkdown(boardType);
     downloadMarkdownFile(filename, content);
@@ -125,12 +158,11 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
     setIsOpen(false);
   };
 
-  const currentBoardInfo = getBoardMarkdown(boardType);
-
   return (
     <div className="relative inline-block text-left" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        disabled={isExportingPng}
         className={`
           flex items-center space-x-1.5 rounded-xl font-semibold cursor-pointer transition-all shadow-xs
           ${size === 'sm' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-xs'}
@@ -140,19 +172,49 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
           ${variant === 'ghost' ? 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--color-border)]/20' : ''}
         `}
       >
-        <Download className="w-4 h-4 text-emerald-500" />
+        {isExportingPng ? <Loader2 className="w-4 h-4 text-emerald-500 animate-spin" /> : <Download className="w-4 h-4 text-emerald-500" />}
         <span>Экспорт {boardTitle ? `(${boardTitle})` : ''}</span>
         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[var(--bg-card)] border border-[var(--color-border)] shadow-xl z-50 py-2 space-y-1 text-xs divide-y divide-[var(--color-border)]">
+        <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-[var(--bg-card)] border border-[var(--color-border)] shadow-xl z-50 py-2 space-y-1 text-xs divide-y divide-[var(--color-border)]">
           <div className="px-3 py-1.5 font-bold text-[var(--text-primary)] flex items-center justify-between">
-            <span>Экспорт этой доски</span>
-            <span className="text-[10px] text-blue-500 font-normal">Markdown / PDF</span>
+            <span>Экспорт доски & Отчета</span>
+            <span className="text-[10px] text-emerald-500 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">PNG / MD / PDF</span>
           </div>
 
+          {/* PNG Section */}
           <div className="py-1 space-y-0.5">
+            <div className="px-3 py-1 font-semibold text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+              Графический экспорт (PNG Картинки)
+            </div>
+
+            <button
+              onClick={handleDownloadSinglePng}
+              disabled={isExportingPng}
+              className="w-full text-left px-3 py-2 hover:bg-blue-500/10 text-[var(--text-primary)] flex items-center space-x-2 cursor-pointer transition-colors"
+            >
+              <Image className="w-3.5 h-3.5 text-blue-500" />
+              <span>Скачать этой доски как PNG (Снимок)</span>
+            </button>
+
+            <button
+              onClick={handleDownloadAllPngs}
+              disabled={isExportingPng}
+              className="w-full text-left px-3 py-2 hover:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold flex items-center space-x-2 cursor-pointer transition-colors"
+            >
+              <Image className="w-3.5 h-3.5 text-indigo-500" />
+              <span>Скачать ВСЕ доски как PNG (Пакетом)</span>
+            </button>
+          </div>
+
+          {/* Markdown Section */}
+          <div className="py-1 space-y-0.5">
+            <div className="px-3 py-1 font-semibold text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
+              Текстовый экспорт (Markdown)
+            </div>
+
             <button
               onClick={handleDownloadSingle}
               className="w-full text-left px-3 py-2 hover:bg-blue-500/10 text-[var(--text-primary)] flex items-center space-x-2 cursor-pointer transition-colors"
@@ -168,12 +230,6 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
               <span>{copied ? 'Скопировано!' : 'Скопировать Markdown этой доски'}</span>
             </button>
-          </div>
-
-          <div className="py-1 space-y-0.5">
-            <div className="px-3 py-1 font-semibold text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">
-              Полный отчет и все доски
-            </div>
 
             <button
               onClick={handleDownloadCombined}
@@ -188,10 +244,13 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
               className="w-full text-left px-3 py-2 hover:bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold flex items-center space-x-2 cursor-pointer transition-colors"
             >
               <FileText className="w-3.5 h-3.5 text-purple-500" />
-              <span>Скачать доски по отдельности (ZIP/файлы)</span>
+              <span>Скачать доски по отдельности (.md файлы)</span>
             </button>
+          </div>
 
-            {onOpenPdfModal && (
+          {/* PDF Section */}
+          {onOpenPdfModal && (
+            <div className="py-1">
               <button
                 onClick={() => {
                   setIsOpen(false);
@@ -200,12 +259,27 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
                 className="w-full text-left px-3 py-2 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold flex items-center space-x-2 cursor-pointer transition-colors"
               >
                 <Printer className="w-3.5 h-3.5 text-blue-500" />
-                <span>Печать / Печать в PDF</span>
+                <span>Печать / Итоговый PDF отчёт</span>
               </button>
-            )}
+            </div>
+          )}
+
+          {/* Developer Attribution Footer */}
+          <div className="px-3 py-2 bg-[var(--bg-main)] rounded-b-2xl border-t border-[var(--color-border)] text-[10px] space-y-0.5">
+            <div className="text-[var(--text-secondary)] font-medium">Разработчик: <span className="font-bold text-[var(--text-primary)]">КАЛЫК ШЫНЫК</span></div>
+            <a 
+              href="https://kalyk-shynyk-web-studio.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline flex items-center space-x-1 font-semibold"
+            >
+              <span>WEB STUDIO & GAMIFICATION</span>
+              <ExternalLink className="w-2.5 h-2.5" />
+            </a>
           </div>
         </div>
       )}
     </div>
   );
 };
+

@@ -210,7 +210,7 @@ export const VacanciesView: React.FC<VacanciesViewProps> = ({
   });
 
   return (
-    <div className="space-y-6">
+    <div id="board-vacancies-view" className="space-y-6">
       
       {/* Target Goal Banner */}
       <TargetGoalBanner 

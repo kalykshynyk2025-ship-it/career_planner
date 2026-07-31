@@ -142,7 +142,7 @@ export const CompaniesView: React.FC<CompaniesViewProps> = ({
   });
 
   return (
-    <div className="space-y-6">
+    <div id="board-companies-view" className="space-y-6">
       
       {/* Target Goal Banner */}
       <TargetGoalBanner 

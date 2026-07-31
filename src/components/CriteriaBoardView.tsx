@@ -102,7 +102,7 @@ export const CriteriaBoardView: React.FC<CriteriaBoardViewProps> = ({
   const checkedCount = criteria.filter(c => c.checked).length;
 
   return (
-    <div className="space-y-6">
+    <div id="board-criteria-view" className="space-y-6">
       <TargetGoalBanner 
         state={state} 
         subtitle="Критерии выбора работодателя выстраиваются для достижения вашей главной цели и уровня дохода."

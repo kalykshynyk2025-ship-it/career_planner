@@ -161,7 +161,7 @@ export const NewslettersView: React.FC<NewslettersViewProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div id="board-newsletters-view" className="space-y-6">
       <TargetGoalBanner 
         state={state} 
         subtitle="Мониторинг дайджестов и подписок ориентирован на получение релевантных офферов под вашу цель."

@@ -134,7 +134,7 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
   const currentStepObj = stepsList.find(s => s.num === currentStepNum) || stepsList[0];
 
   return (
-    <div className="space-y-6">
+    <div id="board-agile-view" className="space-y-6">
       
       {/* Target Goal Banner */}
       <TargetGoalBanner 

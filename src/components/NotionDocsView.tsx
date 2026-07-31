@@ -140,7 +140,7 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div id="board-doc-view" className="space-y-6">
       
       {/* View Header Tabs */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs space-y-3">

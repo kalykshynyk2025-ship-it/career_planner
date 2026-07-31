@@ -342,6 +342,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             </div>
           </div>
+
+          {/* Developer Credit Footer */}
+          <div className="pt-2 border-t border-[var(--color-border)] text-center space-y-1">
+            <p className="text-[10px] text-[var(--text-secondary)] font-medium">Разработчик приложения:</p>
+            <p className="text-xs font-bold text-[var(--text-primary)]">КАЛЫК ШЫНЫК</p>
+            <a 
+              href="https://kalyk-shynyk-web-studio.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block text-[10px] text-blue-600 dark:text-blue-400 font-semibold hover:underline bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20"
+            >
+              WEB STUDIO & GAMIFICATION
+            </a>
+          </div>
         </div>
 
       </aside>
