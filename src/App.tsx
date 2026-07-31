@@ -30,7 +30,16 @@ export function App() {
     const saved = localStorage.getItem('career_os_state');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        const rawSteps: number[] = Array.isArray(parsed.completed_steps) ? parsed.completed_steps : [];
+        const cleanSteps = Array.from(new Set(rawSteps)).filter((s): s is number => typeof s === 'number' && s >= 1 && s <= 8);
+        const currentStep = Math.min(Math.max(parsed.current_step || 1, 1), 8);
+
+        return {
+          ...parsed,
+          current_step: currentStep,
+          completed_steps: cleanSteps
+        };
       } catch (e) {
         console.error('Failed to parse saved state:', e);
       }

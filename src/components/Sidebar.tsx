@@ -80,8 +80,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const criteriaCount = state.notion_criteria?.length || 0;
   const companiesCount = state.selected_companies?.length || 0;
   const vacanciesCount = state.selected_vacancies?.length || 0;
-  const completedCount = state.completed_steps?.length || 0;
-  const progressPercent = Math.round((completedCount / 8) * 100);
+  const completedCount = (state.completed_steps || []).filter(s => typeof s === 'number' && s >= 1 && s <= 8).length;
+  const progressPercent = Math.min(100, Math.round((completedCount / 8) * 100));
 
   const navItems: Array<{
     id: ActiveView;
@@ -136,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'agile_track' as ActiveView,
       label: 'Agile Поток',
       icon: GitCommit,
-      badge: `${state.current_step}/13`
+      badge: `${Math.min(state.current_step || 1, 8)}/8`
     },
     {
       id: 'settings' as ActiveView,
@@ -333,12 +333,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
               />
             </div>
             <div className="mt-2 flex items-center justify-between text-[10px] text-[var(--text-secondary)]">
-              <span>Завершено {completedCount} из 13</span>
+              <span>Завершено {completedCount} из 8</span>
               <button 
                 onClick={() => onSelectView('agile_track')}
                 className="text-blue-600 dark:text-blue-400 hover:underline font-medium cursor-pointer"
               >
-                К шагу #{state.current_step}
+                К шагу #{Math.min(state.current_step || 1, 8)}
               </button>
             </div>
           </div>

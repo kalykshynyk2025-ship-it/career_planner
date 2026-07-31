@@ -104,7 +104,7 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
         <div className="p-4 border-t border-slate-800 bg-slate-900 flex items-center justify-between print:hidden">
           <div className="flex items-center space-x-2 text-xs text-slate-400">
             <Layers className="w-4 h-4 text-blue-400" />
-            <span>Консолидировано: Доски №1-8, SWOT, Agile-трек 13 шагов и Профиль</span>
+            <span>Консолидировано: Доски №1-8, SWOT, Agile-трек 8 шагов и Профиль</span>
           </div>
           <button
             onClick={onClose}

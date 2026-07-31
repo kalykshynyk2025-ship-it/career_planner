@@ -14,8 +14,12 @@ export const generateComprehensiveCareerMarkdown = (state: CareerState): string 
                          (state.swot?.opportunities?.length || 0) + 
                          (state.swot?.threats?.length || 0);
 
-  const completedCount = state.completed_steps?.length || 0;
-  const progressPercent = Math.round((completedCount / 8) * 100);
+  const sanitizedCompletedSteps = Array.from(new Set(state.completed_steps || []))
+    .filter(s => typeof s === 'number' && s >= 1 && s <= 8)
+    .sort((a, b) => a - b);
+  const completedCount = sanitizedCompletedSteps.length;
+  const progressPercent = Math.min(100, Math.round((completedCount / 8) * 100));
+  const currentStepNum = Math.min(Math.max(state.current_step || 1, 1), 8);
 
   return `# ЕДИНЫЙ КАРЬЕРНЫЙ ДОКУМЕНТ И ИТОГОВАЯ СТРАТЕГИЯ
 *Консолидированный отчет по всем заполненным доскам и артефактам системы ${state.appName || 'ML & DS Career OS'}*
@@ -121,12 +125,14 @@ ${[
 
 ## 7. СТАТУС КОНСОЛИДАЦИИ AGILE-ТРЕКА (8 ЭТАПОВ)
 
-- **Текущий активный этап**: Шаг #${state.current_step}
-- **Завершенные этапы**: ${state.completed_steps.map(s => `#${s}`).join(', ')} (${progressPercent}% завершено)
+- **Текущий активный этап**: Шаг #${currentStepNum}
+- **Завершенные этапы**: ${sanitizedCompletedSteps.length > 0 ? sanitizedCompletedSteps.map(s => `#${s}`).join(', ') : 'Нет'} (${progressPercent}% завершено)
 
 ### Результаты прохождения этапов (Outputs Log):
 ${Object.entries(state.stepOutputs || {}).length > 0 
-  ? Object.entries(state.stepOutputs).map(([stepNum, text]) => `#### Этап #${stepNum}\n${text}`).join('\n\n')
+  ? Object.entries(state.stepOutputs)
+      .filter(([stepNum]) => Number(stepNum) >= 1 && Number(stepNum) <= 8)
+      .map(([stepNum, text]) => `#### Этап #${stepNum}\n${text}`).join('\n\n')
   : '_Все 8 этапов инициализированы и готовы к выгрузке._'}
 
 ---

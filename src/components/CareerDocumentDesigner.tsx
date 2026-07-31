@@ -120,8 +120,12 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
     }
   };
 
-  const completedStepsCount = state.completed_steps.length;
-  const progressPercent = Math.round((completedStepsCount / 8) * 100);
+  const sanitizedCompletedSteps = Array.from(new Set(state.completed_steps || []))
+    .filter((s): s is number => typeof s === 'number' && s >= 1 && s <= 8)
+    .sort((a, b) => a - b);
+  const completedStepsCount = sanitizedCompletedSteps.length;
+  const progressPercent = Math.min(100, Math.round((completedStepsCount / 8) * 100));
+  const currentActiveStep = Math.min(Math.max(state.current_step || 1, 1), 8);
 
   // Helper markdown generation for specific sections
   const getSectionMarkdown = (sectionNum: number): string => {
@@ -139,7 +143,7 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
       case 6:
         return `## 6. Доска №5: SWOT-Анализ Профиля\nСильные стороны: ${state.swot?.strengths.join(', ')}\nСлабые стороны: ${state.swot?.weaknesses.join(', ')}\nВозможности: ${state.swot?.opportunities.join(', ')}\nУгрозы: ${state.swot?.threats.join(', ')}`;
       case 7:
-        return `## 7. Статус Agile Трека\n- Завершено шагов: ${completedStepsCount} из 8 (${progressPercent}%)\n- Завершенные этапы: ${state.completed_steps.map(s => `#${s}`).join(', ')}`;
+        return `## 7. Статус Agile Трека\n- Завершено шагов: ${completedStepsCount} из 8 (${progressPercent}%)\n- Завершенные этапы: ${sanitizedCompletedSteps.map(s => `#${s}`).join(', ')}`;
       default:
         return '';
     }
@@ -663,7 +667,7 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--color-border)] pb-2">
             <div>
               <span className="font-bold text-[var(--text-primary)]">Активный этап: </span>
-              <span className="text-blue-600 dark:text-blue-400 font-bold">Шаг #{state.current_step}</span>
+              <span className="text-blue-600 dark:text-blue-400 font-bold">Шаг #{currentActiveStep}</span>
             </div>
             <div>
               <span className="font-bold text-[var(--text-primary)]">Пройдено: </span>
@@ -673,8 +677,8 @@ export const CareerDocumentDesigner: React.FC<CareerDocumentDesignerProps> = ({
 
           <div className="flex flex-wrap gap-1.5">
             {Array.from({ length: 8 }, (_, i) => i + 1).map(stepNum => {
-              const isDone = state.completed_steps.includes(stepNum);
-              const isActive = state.current_step === stepNum;
+              const isDone = sanitizedCompletedSteps.includes(stepNum);
+              const isActive = currentActiveStep === stepNum;
 
               return (
                 <div 

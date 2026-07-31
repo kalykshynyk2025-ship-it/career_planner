@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { CareerState, ActiveView } from '../types';
 
+import { WORKFLOW_STEPS } from '../data/workflow';
+
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -52,21 +54,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const q = query.toLowerCase().trim();
 
   // 1. Search Steps
-  const matchingSteps = [
-    { num: 1, title: 'Карьерное направление & Рынок' },
-    { num: 2, title: 'Анализ должностей (Основная & Запасная)' },
-    { num: 3, title: 'Доска №1: Критерии выбора компании' },
-    { num: 4, title: 'Маппинг 5+ целевых компаний' },
-    { num: 5, title: 'Анализ актуальных вакансий' },
-    { num: 6, title: 'Подписка на карьерные рассылки' },
-    { num: 7, title: 'Декомпозиция требований & ATS' },
-    { num: 8, title: 'Анализ частоты навыков & Оценка' },
-    { num: 9, title: 'Skill Gap Анализ & Приоритеты' },
-    { num: 10, title: 'Поквартальная дорожная карта (Q1-Q4)' },
-    { num: 11, title: 'SWOT-анализ профиля' },
-    { num: 12, title: 'Аудит и проверка результатов' },
-    { num: 13, title: 'Финальный карьерный отчет' }
-  ].filter(s => !q || s.title.toLowerCase().includes(q) || s.num.toString() === q);
+  const matchingSteps = WORKFLOW_STEPS.map(s => ({
+    num: s.id,
+    title: s.titleRu
+  })).filter(s => !q || s.title.toLowerCase().includes(q) || s.num.toString() === q);
 
   // 2. Search Companies
   const matchingCompanies = state.selected_companies.filter(c => 

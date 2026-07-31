@@ -401,7 +401,7 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
 
       </div>
 
-      {/* Full 13 Steps Purpose Guide */}
+      {/* Full 8 Steps Purpose Guide */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-6 shadow-xs space-y-4">
         <div 
           onClick={() => setShowAllStepsGuide(!showAllStepsGuide)} 
@@ -413,7 +413,7 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-[var(--text-primary)]">
-                Полное руководство: Для чего нужен каждый из 13 шагов Agile-Потока
+                Полное руководство: Для чего нужен каждый из 8 шагов Agile-Потока
               </h3>
               <p className="text-xs text-[var(--text-secondary)]">
                 Нажмите, чтобы показать/скрыть подробные цели и артефакты каждого этапа

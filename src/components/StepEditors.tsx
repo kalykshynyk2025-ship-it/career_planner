@@ -944,8 +944,8 @@ export const StepEditors: React.FC<StepEditorsProps> = ({
         </div>
       )}
 
-      {/* STEPS 10-13 QUICK AI HELPERS */}
-      {currentStep >= 10 && (
+      {/* STEPS 7-8 QUICK AI HELPERS */}
+      {currentStep >= 7 && (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="font-bold text-slate-100 text-base">Интерактивный помощник для Этапа #{currentStep}</h3>

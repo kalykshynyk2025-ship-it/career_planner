@@ -163,7 +163,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div>
           <h2 className="text-base font-bold text-[var(--text-primary)]">Настройки профиля и навыков</h2>
           <p className="text-xs text-[var(--text-secondary)]">
-            Параметры ориентации, Hard & Soft навыки, зарплатные вилки и сквозная привязка всех 13 досок
+            Параметры ориентации, Hard & Soft навыки, зарплатные вилки и сквозная привязка всех 8 досок
           </p>
         </div>
       </div>
