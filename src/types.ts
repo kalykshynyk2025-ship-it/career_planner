@@ -134,6 +134,8 @@ export interface CareerState {
     targetLocation: string;
     expectedSalary: string;
     timeline: string;
+    hardSkillsSummary?: string;
+    softSkillsSummary?: string;
   };
   selected_market: string | null;
   selected_position: string | null;
@@ -148,6 +150,7 @@ export interface CareerState {
   swot: SWOT;
   roadmap: RoadmapItem[];
   notion_criteria: NotionCriterion[];
+  currency?: 'RUB' | 'USD' | 'EUR';
   stepOutputs: Record<number, string>;
 }
 

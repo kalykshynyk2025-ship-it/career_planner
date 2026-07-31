@@ -140,7 +140,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'settings' as ActiveView,
-      label: 'Настройки',
+      label: 'Настройки профиля и навыков',
       icon: Settings,
       badge: null
     }

@@ -13,6 +13,7 @@ import {
 import { Company, CareerState } from '../types';
 import { KnowledgeBaseModal } from './KnowledgeBaseModal';
 import { KNOWLEDGE_COMPANIES } from '../data/knowledgeBase';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface CompaniesViewProps {
   state: CareerState;
@@ -141,6 +142,12 @@ export const CompaniesView: React.FC<CompaniesViewProps> = ({
 
   return (
     <div className="space-y-6">
+      
+      {/* Target Goal Banner */}
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Список целевых компаний подбирается под вашу главную карьерную цель и технологический стек."
+      />
       
       {/* Header & Controls Bar */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs space-y-4">

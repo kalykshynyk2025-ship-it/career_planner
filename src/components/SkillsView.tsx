@@ -12,6 +12,7 @@ import {
   Layers
 } from 'lucide-react';
 import { Skill, MissingSkill, CareerState } from '../types';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface SkillsViewProps {
   state: CareerState;
@@ -106,6 +107,12 @@ export const SkillsView: React.FC<SkillsViewProps> = ({
   return (
     <div className="space-y-6">
       
+      {/* Target Goal Banner */}
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Анализ разрывов (Skill Gap) оценивает текущий стек в контексте вашей главной карьерной цели и грейда из Настроек профиля."
+      />
+
       {/* Header Bar */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-3">

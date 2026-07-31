@@ -15,6 +15,7 @@ import { SwotView } from './components/SwotView';
 import { RoadmapKanbanView } from './components/RoadmapKanbanView';
 import { SettingsView } from './components/SettingsView';
 import { SearchModal } from './components/SearchModal';
+import { NotionExportModal } from './components/NotionExportModal';
 import { ActiveView, CareerState } from './types';
 import { INITIAL_CAREER_STATE } from './data/workflow';
 
@@ -43,6 +44,7 @@ export function App() {
   // Modals & Panels
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   // AI Chat
   const [aiMessages, setAiMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
@@ -144,7 +146,7 @@ export function App() {
           darkMode={darkMode}
           onToggleDarkMode={handleToggleDarkMode}
           onOpenSearch={() => setIsSearchOpen(true)}
-          onOpenNotionExport={() => setActiveView('notion_docs')}
+          onOpenNotionExport={() => setIsExportModalOpen(true)}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           onResetState={handleResetState}
           onExportJson={handleExportJson}
@@ -158,7 +160,7 @@ export function App() {
               onChangeState={setState}
               onSelectView={setActiveView}
               onSelectStep={step => setState(prev => ({ ...prev, current_step: step }))}
-              onOpenNotionExport={() => setActiveView('notion_docs')}
+              onOpenNotionExport={() => setIsExportModalOpen(true)}
               onAskAi={handleAskAi}
             />
           )}
@@ -168,7 +170,7 @@ export function App() {
               state={state}
               onChangeState={setState}
               onAskAi={handleAskAi}
-              onOpenNotionExport={() => setActiveView('notion_docs')}
+              onOpenNotionExport={() => setIsExportModalOpen(true)}
             />
           )}
 
@@ -176,7 +178,8 @@ export function App() {
             <NotionDocsView
               state={state}
               onChangeState={setState}
-              onOpenNotionExport={() => setActiveView('notion_docs')}
+              onOpenNotionExport={() => setIsExportModalOpen(true)}
+              onSelectView={setActiveView}
             />
           )}
 
@@ -269,6 +272,13 @@ export function App() {
         state={state}
         onSelectView={setActiveView}
         onSelectStep={step => setState(prev => ({ ...prev, current_step: step }))}
+      />
+
+      {/* PDF Export Modal */}
+      <NotionExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        state={state}
       />
 
     </div>

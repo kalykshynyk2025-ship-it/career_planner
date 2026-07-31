@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   GitCommit, 
   CheckCircle2, 
@@ -11,9 +11,95 @@ import {
   CheckSquare,
   BarChart3,
   ListFilter,
-  RotateCcw
+  RotateCcw,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  BookOpen
 } from 'lucide-react';
 import { CareerState } from '../types';
+import { TargetGoalBanner } from './TargetGoalBanner';
+
+const AGILE_STEPS_INFO: Record<number, { title: string; purpose: string; outputs: string; board: string }> = {
+  1: {
+    title: 'Карьерное направление & Рынок',
+    purpose: 'Определить целевой географический рынок (РФ / СНГ / Global Remote), формат работы (Удаленка, Гибрид, Офис) и фазу развития компании для фокусировки поисковой активности.',
+    outputs: 'Зафиксированная роль, грейд, локация, стартовая зарплатная вилка.',
+    board: 'Настройки профиля'
+  },
+  2: {
+    title: 'Анализ должностей & Ролей',
+    purpose: 'Сравнительный анализ и фиксация основной должности (Senior ML & DS Engineer) и резервной роли (AI Lead / Data Scientist) для максимизации релевантных откликов.',
+    outputs: 'Основная и запасная должность для таргетированного поиска.',
+    board: 'Настройки профиля'
+  },
+  3: {
+    title: 'Доска №1: Критерии выбора компании',
+    purpose: 'Составление жесткого списка критических непереговорочных требований к работодателю (белая зарплата, формат, стек, процессы) для фильтрации вакансий.',
+    outputs: 'Интерактивный чек-лист критериев выбора.',
+    board: 'Доска критериев Notion'
+  },
+  4: {
+    title: 'Маппинг целевых компаний',
+    purpose: 'Формирование списка целевых компаний-мишеней (Tier 1 / Tier 2) в целевых регионах для нетворкинга, рефералов и прямого мониторинга.',
+    outputs: 'Карточки целевых компаний с градацией Tier.',
+    board: 'Доска компаний'
+  },
+  5: {
+    title: 'Анализ актуальных вакансий',
+    purpose: 'Сбор и системное ведение отслеживаемых вакансий в ATS-трекере со статусами откликнулся, прошел интервью, получил оффер.',
+    outputs: 'Управляемая воронка поиска в трекере.',
+    board: 'Доска вакансий (ATS Tracker)'
+  },
+  6: {
+    title: 'Подписка на карьерные рассылки',
+    purpose: 'Настройка автоматического пассивного получения вакансий из Telegram-каналов, профильных дайджестов и карьерных платформ.',
+    outputs: 'Реестр подписок и каналов с быстрыми ссылками.',
+    board: 'Карьерные рассылки'
+  },
+  7: {
+    title: 'Декомпозиция требований & ATS',
+    purpose: 'Глубокий разбор конкретных текстов вакансий на ключевые термины, хард- и софт-навыки для оптимизации резюме под ATS-фильтры.',
+    outputs: 'Карточки глубокого анализа требований вакансий.',
+    board: 'Декомпозиция & ATS Анализ'
+  },
+  8: {
+    title: 'Анализ частоты навыков',
+    purpose: 'Выявление наиболее часто упоминаемых и высокооплачиваемых навыков рынка на основе всех сохраненных вакансий.',
+    outputs: 'Частотный рейтинг технологий и инструментов.',
+    board: 'Анализ навыков'
+  },
+  9: {
+    title: 'Skill Gap Анализ & Приоритеты',
+    purpose: 'Сравнение текущих навыков кандидата с требованиями рынка для выявления пробелов (Skill Gap) и формирования плана развития.',
+    outputs: 'Матрица навыков и реестр пробелов с дедлайнами.',
+    board: 'Матрица навыков & Gap'
+  },
+  10: {
+    title: 'Поквартальный Roadmap (Q1-Q4)',
+    purpose: 'Планирование подготовки по кварталам (Q1-Q4) и спринтам (курсы, проекты, сертификации, интервью) для удержания темпа.',
+    outputs: 'Kanban-доска задач с критериями выполнения.',
+    board: 'Roadmap & Kanban Спринты'
+  },
+  11: {
+    title: 'SWOT-анализ профиля',
+    purpose: 'Комплексная оценка Сильных сторон (Strengths), Слабых мест (Weaknesses), Рыночных возможностей (Opportunities) и Рисков (Threats).',
+    outputs: 'SWOT-матрица и ответы на экспертные вопросы.',
+    board: 'SWOT-анализ (Miro Board)'
+  },
+  12: {
+    title: 'Полный аудит результатов',
+    purpose: 'Контрольная проверка полноты, согласованности и актуальности данных на всех 11 досках перед активной фазой выхода на рынок.',
+    outputs: 'Аудиторская оценка готовности артефактов.',
+    board: 'Консолидация всех досок'
+  },
+  13: {
+    title: 'Финальный карьерный отчет',
+    purpose: 'Сборка всех наработок в единый консолидированный Карьерный Документ и его экспорт в PDF для печати или презентации.',
+    outputs: 'Полный Итоговый Документ в формате PDF.',
+    board: 'Итоговый карьерный документ'
+  }
+};
 
 interface AgileTrackViewProps {
   state: CareerState;
@@ -28,6 +114,7 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
   onAskAi,
   onOpenNotionExport
 }) => {
+  const [showAllStepsGuide, setShowAllStepsGuide] = useState(true);
   const currentStepNum = state.current_step;
 
   // Live data counts from user filled boards
@@ -83,6 +170,12 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
   return (
     <div className="space-y-6">
       
+      {/* Target Goal Banner */}
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Agile-поток (13 этапов методологии) направляет ваше движение к указанной карьерной цели и грейду."
+      />
+
       {/* Header */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
@@ -291,26 +384,26 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
               )}
             </div>
 
-            {/* Quick Actions for Active Step */}
-            <div className="p-4 rounded-xl bg-[var(--bg-main)] border border-[var(--color-border)] space-y-3">
-              <h4 className="font-bold text-xs text-[var(--text-primary)] flex items-center space-x-1.5">
-                <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span>Запустить экспертную консультацию AI по этапу #{currentStepObj.num}</span>
+            {/* Detailed Purpose of current step */}
+            <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 space-y-2 text-xs">
+              <h4 className="font-bold text-blue-600 dark:text-blue-400 flex items-center space-x-2">
+                <HelpCircle className="w-4 h-4 shrink-0" />
+                <span>Для чего нужен шаг #{currentStepObj.num}:</span>
               </h4>
-
-              <div className="flex flex-wrap gap-2 text-xs">
-                <button
-                  onClick={() => onAskAi(`Проведи полный аудит этапа #${currentStepObj.num} (${currentStepObj.title}) с учетом моих зафиксированных данных: ${criteria.length} критериев, ${companies.length} компаний, ${vacancies.length} вакансий.`)}
-                  className="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold cursor-pointer hover:bg-blue-700 transition-colors"
-                >
-                  Провести интервью по заполненным данным
-                </button>
-                <button
-                  onClick={() => onAskAi(`Сформируй идеальный пример заполнения данных для этапа #${currentStepObj.num}.`)}
-                  className="px-3 py-1.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] text-[var(--text-primary)] font-semibold cursor-pointer hover:bg-[var(--bg-hover-sidebar)]"
-                >
-                  Показать готовый пример
-                </button>
+              <p className="text-[var(--text-primary)] leading-relaxed font-medium">
+                {AGILE_STEPS_INFO[currentStepObj.num]?.purpose}
+              </p>
+              <div className="flex flex-wrap gap-3 pt-1 text-[11px] text-[var(--text-secondary)]">
+                <div>
+                  <span className="font-bold text-[var(--text-primary)]">Результат: </span>
+                  {AGILE_STEPS_INFO[currentStepObj.num]?.outputs}
+                </div>
+                <div>
+                  <span className="font-bold text-[var(--text-primary)]">Связано с доской: </span>
+                  <span className="px-2 py-0.5 rounded bg-blue-600/10 text-blue-600 dark:text-blue-400 font-bold">
+                    {AGILE_STEPS_INFO[currentStepObj.num]?.board}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -341,6 +434,75 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
 
         </div>
 
+      </div>
+
+      {/* Full 13 Steps Purpose Guide */}
+      <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-6 shadow-xs space-y-4">
+        <div 
+          onClick={() => setShowAllStepsGuide(!showAllStepsGuide)} 
+          className="flex items-center justify-between cursor-pointer select-none"
+        >
+          <div className="flex items-center space-x-2.5">
+            <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-[var(--text-primary)]">
+                Полное руководство: Для чего нужен каждый из 13 шагов Agile-Потока
+              </h3>
+              <p className="text-xs text-[var(--text-secondary)]">
+                Нажмите, чтобы показать/скрыть подробные цели и артефакты каждого этапа
+              </p>
+            </div>
+          </div>
+          <button className="p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+            {showAllStepsGuide ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {showAllStepsGuide && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-4 border-t border-[var(--color-border)] text-xs">
+            {Object.entries(AGILE_STEPS_INFO).map(([numStr, info]) => {
+              const num = Number(numStr);
+              const isDone = state.completed_steps.includes(num);
+              const isActive = state.current_step === num;
+
+              return (
+                <div 
+                  key={num}
+                  className={`p-3.5 rounded-xl border transition-all space-y-2 ${
+                    isActive 
+                      ? 'bg-blue-600/10 border-blue-500/40 text-[var(--text-primary)]' 
+                      : isDone 
+                        ? 'bg-emerald-500/5 border-emerald-500/20 text-[var(--text-primary)]' 
+                        : 'bg-[var(--bg-main)] border-[var(--color-border)] text-[var(--text-secondary)]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between font-bold text-xs">
+                    <span className="flex items-center space-x-1.5 text-[var(--text-primary)]">
+                      <span className="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-800 text-[10px] flex items-center justify-center font-bold">
+                        #{num}
+                      </span>
+                      <span>{info.title}</span>
+                    </span>
+                    {isDone ? (
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">Готово</span>
+                    ) : (
+                      <span className="text-[10px] text-slate-400">В процессе</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-[var(--text-secondary)]">
+                    {info.purpose}
+                  </p>
+                  <div className="pt-1 border-t border-slate-200 dark:border-slate-800 text-[10px] space-y-0.5">
+                    <div><strong className="text-[var(--text-primary)]">Артефакт:</strong> {info.outputs}</div>
+                    <div><strong className="text-[var(--text-primary)]">Доска:</strong> {info.board}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
     </div>

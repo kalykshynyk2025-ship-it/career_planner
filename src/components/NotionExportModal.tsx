@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Copy, Check, FileText, Printer } from 'lucide-react';
 import { CareerState } from '../types';
 import ReactMarkdown from 'react-markdown';
+import { generateComprehensiveCareerMarkdown } from '../utils/exportMarkdown';
 
 interface NotionExportModalProps {
   isOpen: boolean;
@@ -18,95 +19,7 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Generate complete Markdown document for Export
-  const generateFullMarkdown = (): string => {
-    return `# 🎯 CAREER PLANNER: Карьерная Стратегия & План Развития
-
-> 💡 **Проектное состояние**: ${state.goals.primaryGoal}  
-> 📍 **Текущий грейд**: ${state.goals.currentGrade} ➔ **Целевой грейд**: ${state.goals.targetGrade}  
-> 💰 **Вилка**: ${state.goals.expectedSalary || '300 000 - 450 000 ₽'} | 🌍 **Рынок**: ${state.selected_market || 'РФ / Удаленка'}  
-> 📅 **Сроки**: ${state.goals.timeline}  
-
----
-
-## 1. 🎯 Инициализация и Карьерные Цели
-
-| Параметр | Значение |
-| :--- | :--- |
-| **Главная цель** | ${state.goals.primaryGoal} |
-| **Текущий грейд** | ${state.goals.currentGrade} |
-| **Целевой грейд** | ${state.goals.targetGrade} |
-| **Локация / Формат** | ${state.goals.targetLocation || 'Москва / Удаленка РФ'} |
-| **Дедлайн** | ${state.goals.timeline} |
-
----
-
-## 2. 🏢 Целевые Компании
-
-| Компания | Локация | Стек | Заметки |
-| :--- | :--- | :--- | :--- |
-${state.selected_companies.map(c => `| **${c.name}** | ${c.country || 'РФ'} | ${c.techStack.join(', ')} | ${c.notes || '—'} |`).join('\n')}
-
----
-
-## 3. 🔍 Требования Вакансий & ATS Анализ
-
-${state.selected_vacancies.map(v => `
-### 📌 ${v.title} (${v.company})
-- **Локация & Вилка**: ${v.location} | ${v.salaryRange}
-- **Ключевые навыки**: ${v.keySkills.map(s => `\`${s}\``).join(', ')}
-${v.notes ? `- **Заметки**: ${v.notes}` : ''}
-`).join('\n')}
-
----
-
-## 4. 📋 Критерии Выбора Работодателя
-
-| # | Критерий | Приоритет | Категория |
-| :--- | :--- | :--- | :--- |
-${(state.notion_criteria || []).map((c, i) => `| ${i + 1} | **${c.title}** | ${c.priority || 'Обязательно'} | ${c.category} |`).join('\n')}
-
----
-
-## 5. 🛠️ Матрица Навыков (Skills Matrix)
-
-| Навык | Категория | Уровень | Доказательство / Кейсы |
-| :--- | :--- | :--- | :--- |
-${state.skills.map(s => `| **${s.name}** | ${s.category} | ${s.level} | ${s.evidence} |`).join('\n')}
-
----
-
-## 6. ⚠️ Анализ Разрывов (Skill Gap Analysis)
-
-| Гэп / Пробел | Приоритет | Срок | План устранения |
-| :--- | :--- | :--- | :--- |
-${state.missing_skills.map(m => `| **${m.skillName}** | \`${m.priority}\` | ${m.targetDate} | ${m.actionPlan} |`).join('\n')}
-
----
-
-## 7. 📊 SWOT-Анализ Карьерного Профиля
-
-> 🟢 **Strengths (Сильные стороны)**:
-${state.swot.strengths.map(s => `- [x] ${s}`).join('\n')}
-
-> 🔴 **Weaknesses (Слабые стороны)**:
-${state.swot.weaknesses.map(w => `- [ ] ${w}`).join('\n')}
-
-> 🔵 **Opportunities (Возможности)**:
-${state.swot.opportunities.map(o => `- [x] ${o}`).join('\n')}
-
-> 🟡 **Threats (Угрозы и риски)**:
-${state.swot.threats.map(t => `- [ ] ${t}`).join('\n')}
-
----
-
-## 8. 🚀 Agile Дорожная Карта (Sprints & Backlog)
-
-${state.roadmap.map(r => `- [${r.status === 'Done' ? 'x' : ' '}] **${r.sprint}**: ${r.task} *(${r.category})* — *Done metric: ${r.metric}*`).join('\n')}
-`;
-  };
-
-  const fullMarkdown = generateFullMarkdown();
+  const fullMarkdown = generateComprehensiveCareerMarkdown(state);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fullMarkdown);

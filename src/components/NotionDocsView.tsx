@@ -14,18 +14,22 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { CareerState, NotionCriterion } from '../types';
+import { CareerState, NotionCriterion, ActiveView } from '../types';
+import { generateComprehensiveCareerMarkdown } from '../utils/exportMarkdown';
+import { CareerDocumentDesigner } from './CareerDocumentDesigner';
 
 interface NotionDocsViewProps {
   state: CareerState;
   onChangeState: React.Dispatch<React.SetStateAction<CareerState>>;
   onOpenNotionExport: () => void;
+  onSelectView?: (view: ActiveView) => void;
 }
 
 export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
   state,
   onChangeState,
-  onOpenNotionExport
+  onOpenNotionExport,
+  onSelectView
 }) => {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'checklist' | 'full_doc'>('checklist');
@@ -81,25 +85,9 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
     return c.category === filterCategory;
   });
 
-  // Generate Document Markdown
+  // Generate Comprehensive Document Markdown
   const generateDocumentMarkdown = () => {
-    let md = `# 🎯 Итоговый Карьерный Документ\n\n`;
-    md += `*Стратегия поиска работы для должности: ${state.selected_position || 'Senior ML / DS Specialist'}*\n\n`;
-    md += `### 📋 Критерии выбора работодателя:\n\n`;
-
-    criteria.forEach(item => {
-      const mark = item.checked ? '[x]' : '[ ]';
-      md += `- ${mark} **${item.title}** (${item.priority || 'Обязательно'})\n  *${item.description}*\n\n`;
-    });
-
-    md += `---\n\n## 🚀 Сводка целевых компаний:\n\n`;
-    md += `| Компания | Локация / Формат | Технологический стек |\n`;
-    md += `| :--- | :--- | :--- |\n`;
-    state.selected_companies.forEach(c => {
-      md += `| **${c.name}** | ${c.country || 'РФ'} | ${c.techStack.join(', ')} |\n`;
-    });
-
-    return md;
+    return generateComprehensiveCareerMarkdown(state);
   };
 
   const handleCopyMarkdown = () => {
@@ -285,28 +273,13 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
 
         </div>
       ) : (
-        /* Render Full Markdown Document Page */
-        <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-4 border-b border-[var(--color-border)]">
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">📄</span>
-              <h3 className="text-lg font-bold text-[var(--text-primary)]">
-                Итоговый карьерный документ
-              </h3>
-            </div>
-            <button
-              onClick={onOpenNotionExport}
-              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center space-x-1.5 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>Экспорт документа в PDF</span>
-            </button>
-          </div>
-
-          <div className="prose dark:prose-invert max-w-none text-xs">
-            <ReactMarkdown>{generateDocumentMarkdown()}</ReactMarkdown>
-          </div>
-        </div>
+        /* Render Designer Career Document Page */
+        <CareerDocumentDesigner
+          state={state}
+          onChangeState={onChangeState}
+          onOpenNotionExport={onOpenNotionExport}
+          onSelectView={onSelectView}
+        />
       )}
 
     </div>

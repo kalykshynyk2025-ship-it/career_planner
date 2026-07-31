@@ -143,3 +143,130 @@
   font-style: italic;
   margin: 0.75rem 0;
 }
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  aside, header, nav, button, .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:static {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print\:max-h-none {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+
+  .print\:border-none {
+    border: none !important;
+  }
+
+  .print\:bg-white {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .prose, .notion-prose {
+    color: #1e293b !important;
+    font-size: 10pt !important;
+    line-height: 1.5 !important;
+    max-width: 100% !important;
+  }
+
+  .prose h1 {
+    font-size: 18pt !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    border-bottom: 2px solid #0f172a !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 12px !important;
+    page-break-after: avoid;
+  }
+
+  .prose h2 {
+    font-size: 13pt !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    padding-bottom: 4px !important;
+    margin-top: 16px !important;
+    margin-bottom: 8px !important;
+    page-break-after: avoid;
+  }
+
+  .prose h3 {
+    font-size: 11pt !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    margin-top: 12px !important;
+    margin-bottom: 6px !important;
+    page-break-after: avoid;
+  }
+
+  .prose blockquote {
+    background: #f8fafc !important;
+    border-left: 4px solid #2563eb !important;
+    color: #334155 !important;
+    padding: 8px 12px !important;
+    margin: 10px 0 !important;
+    font-style: normal !important;
+  }
+
+  .prose table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 10px 0 !important;
+    page-break-inside: auto;
+  }
+
+  .prose tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  .prose th, .prose td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 10px !important;
+    text-align: left !important;
+    font-size: 9.5pt !important;
+  }
+
+  .prose th {
+    background-color: #f1f5f9 !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+  }
+
+  .prose code {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    padding: 2px 4px !important;
+    border-radius: 4px !important;
+    font-size: 9pt !important;
+  }
+
+  .prose ul, .prose ol {
+    padding-left: 20px !important;
+    margin: 6px 0 !important;
+  }
+
+  .prose li {
+    margin: 2px 0 !important;
+  }
+}

@@ -3,6 +3,7 @@ import { CheckSquare, Plus, Trash2, Sparkles, AlertCircle, Tag, Check, ArrowRigh
 import { CareerState, NotionCriterion } from '../types';
 import { KNOWLEDGE_CRITERIA } from '../data/knowledgeBase';
 import { KnowledgeBaseModal } from './KnowledgeBaseModal';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface CriteriaBoardViewProps {
   state: CareerState;
@@ -101,6 +102,11 @@ export const CriteriaBoardView: React.FC<CriteriaBoardViewProps> = ({
 
   return (
     <div className="space-y-6">
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Критерии выбора работодателя выстраиваются для достижения вашей главной цели и уровня дохода."
+      />
+
       {/* Header */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
         <div>

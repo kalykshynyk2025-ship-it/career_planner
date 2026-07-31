@@ -11,6 +11,7 @@ import {
   X
 } from 'lucide-react';
 import { RoadmapItem, CareerState } from '../types';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface RoadmapKanbanViewProps {
   state: CareerState;
@@ -87,6 +88,12 @@ export const RoadmapKanbanView: React.FC<RoadmapKanbanViewProps> = ({
   return (
     <div className="space-y-6">
       
+      {/* Target Goal Banner */}
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Задачи спринтов и дорожная карта (Roadmap) нацелены на достижение ваших целевых результатов и грейда."
+      />
+
       {/* Header Bar */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-3">

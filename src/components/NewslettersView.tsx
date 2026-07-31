@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Mail, Plus, ExternalLink, Trash2, CheckCircle2, Clock, Check } from 'lucide-react';
+import { Mail, Plus, ExternalLink, Trash2, CheckCircle2, Clock, Check, Edit3, X, Save } from 'lucide-react';
 import { CareerState, CareerNewsletter } from '../types';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface NewslettersViewProps {
   state: CareerState;
@@ -58,7 +59,47 @@ export const NewslettersView: React.FC<NewslettersViewProps> = ({
   const [notes, setNotes] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
+  // Edit newsletter state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editCompany, setEditCompany] = useState('');
+  const [editTitle, setEditTitle] = useState('');
+  const [editFrequency, setEditFrequency] = useState('Еженедельно');
+  const [editLink, setEditLink] = useState('');
+  const [editNotes, setEditNotes] = useState('');
+
   const newsletters = state.newsletters || [];
+
+  const handleStartEdit = (nl: CareerNewsletter) => {
+    setEditingId(nl.id);
+    setEditCompany(nl.companyName);
+    setEditTitle(nl.title);
+    setEditFrequency(nl.frequency || 'Еженедельно');
+    setEditLink(nl.link || '');
+    setEditNotes(nl.notes || '');
+  };
+
+  const handleSaveEdit = (id: string) => {
+    onChangeState(prev => ({
+      ...prev,
+      newsletters: (prev.newsletters || []).map(item =>
+        item.id === id
+          ? {
+              ...item,
+              companyName: editCompany.trim() || item.companyName,
+              title: editTitle.trim() || item.title,
+              frequency: editFrequency,
+              link: editLink.trim(),
+              notes: editNotes.trim()
+            }
+          : item
+      )
+    }));
+    setEditingId(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+  };
 
   const handleAddPreset = (preset: Omit<CareerNewsletter, 'id'>) => {
     const existing = newsletters.some(n => n.companyName.toLowerCase() === preset.companyName.toLowerCase() && n.title.toLowerCase() === preset.title.toLowerCase());
@@ -120,6 +161,11 @@ export const NewslettersView: React.FC<NewslettersViewProps> = ({
 
   return (
     <div className="space-y-6">
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Мониторинг дайджестов и подписок ориентирован на получение релевантных офферов под вашу цель."
+      />
+
       {/* Header */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
         <div className="flex items-center space-x-3">
@@ -276,70 +322,192 @@ export const NewslettersView: React.FC<NewslettersViewProps> = ({
 
       {/* Newsletter Cards List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {newsletters.map((nl) => (
-          <div
-            key={nl.id}
-            className={`bg-[var(--bg-card)] border rounded-2xl p-5 space-y-4 transition-all relative ${
-              nl.subscribed ? 'border-purple-500/40 shadow-xs' : 'border-[var(--color-border)] opacity-70'
-            }`}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="px-2.5 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-[11px]">
-                  {nl.companyName}
-                </span>
-                <h3 className="font-bold text-sm text-[var(--text-primary)] mt-1.5">
-                  {nl.title}
-                </h3>
-              </div>
+        {newsletters.map((nl) => {
+          const isEditing = editingId === nl.id;
 
-              <button
-                onClick={() => handleDelete(nl.id)}
-                className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all"
-                title="Удалить"
+          if (isEditing) {
+            return (
+              <div
+                key={nl.id}
+                className="bg-[var(--bg-card)] border border-purple-500 rounded-2xl p-5 space-y-3 shadow-md"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
+                <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border)]">
+                  <span className="font-bold text-xs text-purple-600 dark:text-purple-400">Редактирование рассылки</span>
+                  <button onClick={handleCancelEdit} className="text-rose-500 hover:text-rose-600 cursor-pointer">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
 
-            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              {nl.notes || 'Мониторинг обновлений и анонсов новых позиций.'}
-            </p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-[var(--text-secondary)] mb-0.5">Компания</label>
+                    <input
+                      type="text"
+                      value={editCompany}
+                      onChange={e => setEditCompany(e.target.value)}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-primary)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-[var(--text-secondary)] mb-0.5">Периодичность</label>
+                    <input
+                      type="text"
+                      value={editFrequency}
+                      onChange={e => setEditFrequency(e.target.value)}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-primary)]"
+                    />
+                  </div>
+                </div>
 
-            <div className="flex items-center justify-between text-xs pt-3 border-t border-[var(--color-border)]">
-              <div className="flex items-center space-x-2 text-[var(--text-secondary)]">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{nl.frequency}</span>
-              </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-[var(--text-secondary)] mb-0.5">Название рассылки</label>
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={e => setEditTitle(e.target.value)}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-primary)] font-semibold"
+                  />
+                </div>
 
-              <div className="flex items-center space-x-3">
-                {nl.link && (
-                  <a
-                    href={nl.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center space-x-1"
+                <div>
+                  <label className="block text-[10px] font-semibold text-purple-600 dark:text-purple-400 mb-0.5">Ссылка на источник подписки (URL / Telegram)</label>
+                  <input
+                    type="url"
+                    value={editLink}
+                    onChange={e => setEditLink(e.target.value)}
+                    placeholder="https://t.me/company_jobs"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-purple-500/50 bg-[var(--bg-main)] text-[var(--text-primary)] text-xs font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-semibold text-[var(--text-secondary)] mb-0.5">Заметки / Описание</label>
+                  <input
+                    type="text"
+                    value={editNotes}
+                    onChange={e => setEditNotes(e.target.value)}
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-primary)]"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end space-x-2 pt-2 border-t border-[var(--color-border)]">
+                  <button
+                    onClick={handleCancelEdit}
+                    className="px-3 py-1 text-xs border border-[var(--color-border)] rounded-lg text-[var(--text-secondary)] cursor-pointer"
                   >
-                    <span>Открыть</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
+                    Отмена
+                  </button>
+                  <button
+                    onClick={() => handleSaveEdit(nl.id)}
+                    className="px-3 py-1 text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white rounded-lg cursor-pointer flex items-center space-x-1"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Сохранить</span>
+                  </button>
+                </div>
+              </div>
+            );
+          }
 
-                <button
-                  onClick={() => handleToggleSubscribe(nl.id)}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 ${
-                    nl.subscribed
-                      ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
-                      : 'bg-gray-500/10 text-gray-500 border border-gray-500/20'
-                  }`}
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>{nl.subscribed ? 'Подписан' : 'Пауза'}</span>
-                </button>
+          return (
+            <div
+              key={nl.id}
+              className={`bg-[var(--bg-card)] border rounded-2xl p-5 space-y-4 transition-all relative ${
+                nl.subscribed ? 'border-purple-500/40 shadow-xs' : 'border-[var(--color-border)] opacity-70'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="px-2.5 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-[11px]">
+                    {nl.companyName}
+                  </span>
+                  <h3 className="font-bold text-sm text-[var(--text-primary)] mt-1.5">
+                    {nl.title}
+                  </h3>
+                </div>
+
+                <div className="flex items-center space-x-1">
+                  <button
+                    onClick={() => handleStartEdit(nl)}
+                    className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all cursor-pointer"
+                    title="Редактировать подписку и ссылку"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(nl.id)}
+                    className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
+                    title="Удалить"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                {nl.notes || 'Мониторинг обновлений и анонсов новых позиций.'}
+              </p>
+
+              {/* Display source link */}
+              {nl.link && (
+                <div className="text-xs bg-[var(--bg-main)] p-2 rounded-xl border border-[var(--color-border)] flex items-center justify-between">
+                  <div className="flex items-center space-x-1.5 truncate max-w-[220px]">
+                    <span className="text-[10px] text-[var(--text-secondary)] font-medium shrink-0">Источник:</span>
+                    <a
+                      href={nl.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-purple-600 dark:text-purple-400 font-mono text-[11px] hover:underline truncate"
+                      title={nl.link}
+                    >
+                      {nl.link}
+                    </a>
+                  </div>
+                  <button
+                    onClick={() => handleStartEdit(nl)}
+                    className="text-[10px] text-purple-600 dark:text-purple-400 font-semibold hover:underline flex items-center space-x-0.5 shrink-0"
+                  >
+                    <Edit3 className="w-3 h-3" />
+                    <span>Изм. ссылку</span>
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between text-xs pt-3 border-t border-[var(--color-border)]">
+                <div className="flex items-center space-x-2 text-[var(--text-secondary)]">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>{nl.frequency}</span>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  {nl.link && (
+                    <a
+                      href={nl.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-purple-600 dark:text-purple-400 font-medium hover:underline flex items-center space-x-1"
+                    >
+                      <span>Перейти</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+
+                  <button
+                    onClick={() => handleToggleSubscribe(nl.id)}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
+                      nl.subscribed
+                        ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
+                        : 'bg-gray-500/10 text-gray-500 border border-gray-500/20'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>{nl.subscribed ? 'Подписан' : 'Пауза'}</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Compass, Sparkles, ZoomIn, ZoomOut, Grid, Move, Check, Edit3, ShieldAlert, Award, AlertTriangle, TrendingUp, RefreshCw, BookOpen } from 'lucide-react';
+import { Compass, Sparkles, ZoomIn, ZoomOut, Grid, Move, Check, Edit3, ShieldAlert, Award, AlertTriangle, TrendingUp, RefreshCw, BookOpen, Zap } from 'lucide-react';
 import { CareerState, SwotDetailedAnswers } from '../types';
 import { KNOWLEDGE_SWOT_EXPERT_ANSWERS } from '../data/knowledgeBase';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface MiroSwotBoardViewProps {
   state: CareerState;
@@ -45,16 +46,43 @@ export const MiroSwotBoardView: React.FC<MiroSwotBoardViewProps> = ({
   };
 
   const handleGenerateFromKnowledgeBase = () => {
+    const hardSkillsSummary = state.goals?.hardSkillsSummary || state.skills.filter(s => s.category === 'Hard Skill').map(s => s.name).join(', ') || 'Python, PyTorch, LLM Fine-Tuning, MLOps, System Design';
+    const softSkillsSummary = state.goals?.softSkillsSummary || state.skills.filter(s => s.category === 'Soft Skill').map(s => s.name).join(', ') || 'Technical Leadership, Mentorship, Agile';
+    const primaryGoal = state.goals?.primaryGoal || 'Переход на позицию Senior ML & DS Engineer';
+    const targetPos = state.selected_position || 'Senior ML & DS Engineer / AI Architect';
+
+    const customizedStrengths = KNOWLEDGE_SWOT_EXPERT_ANSWERS.strengths.map(q => {
+      if (q.questionId === 's1') {
+        return {
+          ...q,
+          answerText: `Ключевой стек Hard Skills из Настроек профиля: ${hardSkillsSummary}. Экспертный опыт коммерческой разработки.`
+        };
+      }
+      if (q.questionId === 's2') {
+        return {
+          ...q,
+          answerText: `Компетенции Soft Skills из Настроек профиля: ${softSkillsSummary}.`
+        };
+      }
+      if (q.questionId === 's3' || q.questionId === 's4') {
+        return {
+          ...q,
+          answerText: `${q.answerText} (Ориентировано на целевую роль ${targetPos} и цель: ${primaryGoal})`
+        };
+      }
+      return q;
+    });
+
     onChangeState(prev => ({
       ...prev,
       swot_answers: {
-        strengths: KNOWLEDGE_SWOT_EXPERT_ANSWERS.strengths,
+        strengths: customizedStrengths,
         weaknesses: KNOWLEDGE_SWOT_EXPERT_ANSWERS.weaknesses,
         opportunities: KNOWLEDGE_SWOT_EXPERT_ANSWERS.opportunities,
         threats: KNOWLEDGE_SWOT_EXPERT_ANSWERS.threats,
       },
       swot_analysis: {
-        strengths: KNOWLEDGE_SWOT_EXPERT_ANSWERS.strengths.map(s => `• ${s.questionText}\n  ${s.answerText}`).join('\n\n'),
+        strengths: customizedStrengths.map(s => `• ${s.questionText}\n  ${s.answerText}`).join('\n\n'),
         weaknesses: KNOWLEDGE_SWOT_EXPERT_ANSWERS.weaknesses.map(w => `• ${w.questionText}\n  ${w.answerText}`).join('\n\n'),
         opportunities: KNOWLEDGE_SWOT_EXPERT_ANSWERS.opportunities.map(o => `• ${o.questionText}\n  ${o.answerText}`).join('\n\n'),
         threats: KNOWLEDGE_SWOT_EXPERT_ANSWERS.threats.map(t => `• ${t.questionText}\n  ${t.answerText}`).join('\n\n'),
@@ -64,6 +92,13 @@ export const MiroSwotBoardView: React.FC<MiroSwotBoardViewProps> = ({
 
   return (
     <div className="space-y-6">
+      
+      {/* Target Goal Banner */}
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Интерактивная SWOT-доска синхронизируется с Hard/Soft навыками и карьерными целями из Настроек профиля и навыков."
+      />
+
       {/* Top Header */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
         <div className="flex items-center space-x-3">

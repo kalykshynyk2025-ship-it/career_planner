@@ -14,6 +14,7 @@ import {
   Filter
 } from 'lucide-react';
 import { Vacancy, CareerState } from '../types';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface VacanciesViewProps {
   state: CareerState;
@@ -210,6 +211,12 @@ export const VacanciesView: React.FC<VacanciesViewProps> = ({
   return (
     <div className="space-y-6">
       
+      {/* Target Goal Banner */}
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="Воронка откликов и ATS-анализ вакансий сопоставляются с вашей главной карьерной целью."
+      />
+
       {/* Header & Controls */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -307,10 +314,42 @@ export const VacanciesView: React.FC<VacanciesViewProps> = ({
               {filteredVacancies.map((v) => (
                 <tr key={v.id} className="hover:bg-[var(--bg-hover-sidebar)] transition-colors">
                   
-                  {/* Title & Company */}
-                  <td className="p-4">
+                  {/* Title & Company & Description / Link */}
+                  <td className="p-4 max-w-xs">
                     <div className="font-bold text-sm text-[var(--text-primary)]">{v.title}</div>
                     <div className="text-[11px] text-blue-600 dark:text-blue-400 font-semibold">{v.company}</div>
+                    
+                    {/* Description / Notes */}
+                    {v.notes && (
+                      <div className="text-[11px] text-[var(--text-secondary)] italic mt-1 line-clamp-2 bg-[var(--bg-main)] p-1.5 rounded-lg border border-[var(--color-border)]">
+                        {v.notes}
+                      </div>
+                    )}
+
+                    {/* Link */}
+                    {v.link ? (
+                      <div className="mt-1 flex items-center space-x-1 text-[11px]">
+                        <span className="text-[var(--text-secondary)]">Ссылка:</span>
+                        <a
+                          href={v.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-purple-600 dark:text-purple-400 font-medium hover:underline truncate max-w-[180px] flex items-center space-x-0.5"
+                          title={v.link}
+                        >
+                          <span className="truncate">{v.link.replace(/^https?:\/\//, '')}</span>
+                          <ExternalLink className="w-3 h-3 shrink-0" />
+                        </a>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleOpenEdit(v)}
+                        className="mt-1 text-[10px] text-amber-500 hover:underline flex items-center space-x-1"
+                      >
+                        <Edit3 className="w-2.5 h-2.5" />
+                        <span>+ Добавить ссылку/описание</span>
+                      </button>
+                    )}
                   </td>
 
                   {/* Salary & Location */}
@@ -461,6 +500,28 @@ export const VacanciesView: React.FC<VacanciesViewProps> = ({
                   type="text"
                   value={location}
                   onChange={e => setLocation(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-primary)]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-secondary)] font-semibold mb-1">Ссылка на вакансию (URL)</label>
+                <input
+                  type="url"
+                  placeholder="https://yandex.ru/jobs/vacancies/12345"
+                  value={link}
+                  onChange={e => setLink(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-primary)]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-secondary)] font-semibold mb-1">Описание / Заметки к вакансии</label>
+                <textarea
+                  rows={2}
+                  placeholder="Особенности позиции, вилка, стек, контакты рекрутера..."
+                  value={notes}
+                  onChange={e => setNotes(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-primary)]"
                 />
               </div>

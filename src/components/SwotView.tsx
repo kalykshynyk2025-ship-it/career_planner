@@ -8,9 +8,12 @@ import {
   TrendingUp, 
   ShieldAlert, 
   Sparkles,
-  X 
+  X,
+  RefreshCw,
+  Zap
 } from 'lucide-react';
 import { SWOT, CareerState } from '../types';
+import { TargetGoalBanner } from './TargetGoalBanner';
 
 interface SwotViewProps {
   state: CareerState;
@@ -32,6 +35,29 @@ export const SwotView: React.FC<SwotViewProps> = ({
     weaknesses: [],
     opportunities: [],
     threats: []
+  };
+
+  const handleSyncFromProfileSkills = () => {
+    const hardSummary = state.goals?.hardSkillsSummary || state.skills.filter(s => s.category === 'Hard Skill').map(s => s.name).join(', ') || 'Python, PyTorch, LLM, MLOps, System Design';
+    const softSummary = state.goals?.softSkillsSummary || state.skills.filter(s => s.category === 'Soft Skill').map(s => s.name).join(', ') || 'Technical Leadership, Mentorship, Presentation';
+    const pos = state.selected_position || 'Senior ML & DS Engineer';
+    const goal = state.goals?.primaryGoal || 'Переход на позицию Senior ML & DS Engineer';
+    const grade = state.goals?.targetGrade || 'Senior';
+
+    const profileStrengths = [
+      `Экспертиза в Hard Skills (из профиля): ${hardSummary}`,
+      `Лидерские и Soft навыки (из профиля): ${softSummary}`,
+      `Целевая роль и грейд: ${pos} (${grade})`,
+      `Главная карьерная цель: ${goal}`
+    ];
+
+    onChangeState(prev => ({
+      ...prev,
+      swot: {
+        ...prev.swot,
+        strengths: Array.from(new Set([...profileStrengths, ...(prev.swot.strengths || [])]))
+      }
+    }));
   };
 
   const handleAddItem = (e: React.FormEvent) => {
@@ -63,6 +89,12 @@ export const SwotView: React.FC<SwotViewProps> = ({
   return (
     <div className="space-y-6">
       
+      {/* Target Goal Banner */}
+      <TargetGoalBanner 
+        state={state} 
+        subtitle="SWOT-анализ профиля опирается на карьерную цель, вилку и список Hard/Soft навыков из «Настроек профиля и навыков»."
+      />
+
       {/* Header */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
@@ -77,7 +109,16 @@ export const SwotView: React.FC<SwotViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 flex-wrap gap-y-2">
+          <button
+            onClick={handleSyncFromProfileSkills}
+            className="px-3.5 py-2 bg-purple-600/10 hover:bg-purple-600/20 text-purple-600 dark:text-purple-400 border border-purple-500/30 rounded-xl text-xs font-semibold flex items-center space-x-1.5 cursor-pointer"
+            title="Заполнить сильные стороны навыками из Настроек профиля"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>Заполнить из Настроек навыков</span>
+          </button>
+
           <button
             onClick={() => onAskAi('Проведи детальный SWOT-анализ моего карьерного профиля и дай стратегические рекомендации по усилению позиционирования.')}
             className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer"

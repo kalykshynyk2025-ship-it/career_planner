@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
     swot: 'SWOT-анализ профиля',
     roadmap_kanban: 'Roadmap & Kanban Спринты',
     ai_coach: 'Анализ карьерного трека',
-    settings: 'Настройки профиля & Экспорт'
+    settings: 'Настройки профиля и навыков'
   };
 
   return (
@@ -160,6 +160,33 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Search className="w-4 h-4" />
         </button>
+
+        {/* Currency Switcher */}
+        {onChangeState && (
+          <div className="hidden sm:flex items-center bg-[var(--bg-main)] border border-[var(--color-border)] rounded-xl p-0.5 text-xs font-bold">
+            <button
+              onClick={() => onChangeState(prev => ({ ...prev, currency: 'RUB' }))}
+              className={`px-2 py-1 rounded-lg transition-colors cursor-pointer ${(!state.currency || state.currency === 'RUB') ? 'bg-emerald-600 text-white shadow-2xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+              title="Переключить валюту на Рубли (₽)"
+            >
+              ₽
+            </button>
+            <button
+              onClick={() => onChangeState(prev => ({ ...prev, currency: 'USD' }))}
+              className={`px-2 py-1 rounded-lg transition-colors cursor-pointer ${state.currency === 'USD' ? 'bg-blue-600 text-white shadow-2xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+              title="Переключить валюту на Доллары ($)"
+            >
+              $
+            </button>
+            <button
+              onClick={() => onChangeState(prev => ({ ...prev, currency: 'EUR' }))}
+              className={`px-2 py-1 rounded-lg transition-colors cursor-pointer ${state.currency === 'EUR' ? 'bg-indigo-600 text-white shadow-2xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+              title="Переключить валюту на Евро (€)"
+            >
+              €
+            </button>
+          </div>
+        )}
 
         {/* Dark/Light Theme Switcher */}
         <button

@@ -117,9 +117,12 @@ export const INITIAL_CAREER_STATE: CareerState = {
     targetGrade: "Senior ML / AI Architect",
     targetLocation: "Удаленка / Гибрид",
     expectedSalary: "380 000 - 550 000 ₽ / мес",
-    timeline: "3-6 месяцев"
+    timeline: "3-6 месяцев",
+    hardSkillsSummary: "Python, PyTorch, LLM Fine-Tuning, MLOps, RAG, Distributed Training (DeepSpeed), Vector DBs (Qdrant), System Design",
+    softSkillsSummary: "Technical Leadership, Agile/Scrum Mentorship, Stakeholder Management, Architecture Presentations, Cross-functional Communication"
   },
   selected_market: "РФ / Global Remote",
+  currency: 'RUB',
   selected_position: "Senior ML & DS Engineer / AI Architect",
   selected_companies: [
     {
