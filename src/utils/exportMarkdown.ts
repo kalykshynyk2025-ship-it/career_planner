@@ -27,6 +27,7 @@ export const generateComprehensiveCareerMarkdown = (state: CareerState): string 
 ---
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Разработчик системы**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
 > **Основная Карьерная Цель**: ${state.goals?.primaryGoal || 'Переход на позицию Senior ML & DS Engineer'}  
 > **Целевая Роль**: ${state.selected_position || 'Senior ML & DS Engineer'} (Резерв: ${state.alternate_position || 'Lead Data Scientist'})  
 > **Грейд**: ${state.goals?.currentGrade || 'Middle+'} ➔ **${state.goals?.targetGrade || 'Senior ML / AI Architect'}**  
@@ -162,6 +163,7 @@ export const generateCriteriaBoardMarkdown = (state: CareerState): string => {
 *Карьерная Стратегия: ${state.selected_position || 'Senior ML & DS Engineer'}*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
 > **Всего критериев**: ${criteria.length}
 
 | # | Критерий | Статус | Приоритет | Категория | Подробное описание |
@@ -178,6 +180,7 @@ export const generateCompaniesBoardMarkdown = (state: CareerState): string => {
 *Карьерный Стек & Целевой Рынок: ${state.selected_market || 'РФ / Global Remote'}*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
 > **Всего компаний**: ${companies.length}
 
 | # | Компания | Уровень / Страна | Стек Технологий | Визовая поддержка | Карьерная ссылка | Заметки |
@@ -194,6 +197,7 @@ export const generateVacanciesBoardMarkdown = (state: CareerState): string => {
 *Позиция: ${state.selected_position || 'Senior ML & DS Engineer'} | Доход: ${state.goals?.expectedSalary || '380 000 - 550 000 ₽'}*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
 > **Всего вакансий в воронке**: ${vacancies.length}
 
 | # | Название Вакансии | Компания | Локация | Зарплатная вилка | Статус Воронки | ATS Match | Ссылка |
@@ -210,6 +214,7 @@ export const generateNewslettersBoardMarkdown = (state: CareerState): string => 
 *Мониторинг позиций и источников*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
 > **Всего источников**: ${newsletters.length}
 
 | # | Источник / Канал | Компания / Сообщество | Частота | Статус Подписки | Ссылка |
@@ -227,7 +232,8 @@ export const generateSwotBoardMarkdown = (state: CareerState): string => {
   return `# ДОСКА №5: SWOT-АНАЛИЗ ПРОФИЛЯ И ЭКСПЕРТНЫЕ ОТВЕТЫ
 *Оценка сильных и слабых сторон, возможностей и рисков*
 
-> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)
 
 ### 1. Сильные стороны (Strengths)
 ${(swot.strengths || []).map(s => `- ${s}`).join('\n')}
@@ -265,6 +271,7 @@ export const generateAgileTrackMarkdown = (state: CareerState): string => {
 *Карьерный спринт-поток*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
 > **Общий прогресс**: ${completedCount} / 8 этапов (${progressPercent}%)  
 > **Текущий активный шаг**: #${currentStepNum}  
 > **Завершенные шаги**: ${sanitizedCompletedSteps.length > 0 ? sanitizedCompletedSteps.map(s => `#${s}`).join(', ') : 'Нет'}
