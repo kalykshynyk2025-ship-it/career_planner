@@ -240,7 +240,11 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
                   onClick={() => setFilterCategory(cat)}
                   className={`px-3 py-1 rounded-lg font-medium cursor-pointer transition-colors ${filterCategory === cat ? 'bg-blue-600 text-white' : 'bg-[var(--bg-card)] border border-[var(--color-border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
                 >
-                  {cat === 'All' ? 'Все' : cat}
+                  {cat === 'All' && 'Все'}
+                  {cat === 'Compensation' && 'Доход и бенефиты'}
+                  {cat === 'Work Environment' && 'Условия и график'}
+                  {cat === 'Tech Stack' && 'Стек и архитектура'}
+                  {cat === 'Growth & Team' && 'Команда и рост'}
                 </button>
               ))}
             </div>
@@ -272,10 +276,10 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
                   onChange={e => setNewCat(e.target.value as any)}
                   className="px-3 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--bg-main)] text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
-                  <option value="Compensation">Compensation & Benefits</option>
-                  <option value="Work Environment">Work Environment (Remote/Office)</option>
-                  <option value="Tech Stack">Tech Stack & Architecture</option>
-                  <option value="Growth & Team">Growth & Team Culture</option>
+                  <option value="Compensation">Доход и бенефиты (Compensation)</option>
+                  <option value="Work Environment">Условия и график (Work Environment)</option>
+                  <option value="Tech Stack">Стек и архитектура (Tech Stack)</option>
+                  <option value="Growth & Team">Команда и рост (Growth & Team)</option>
                 </select>
               </div>
               <textarea
@@ -344,7 +348,10 @@ export const NotionDocsView: React.FC<NotionDocsViewProps> = ({
 
                 <div className="flex items-center justify-between pt-2 border-t border-[var(--color-border)] text-[10px]">
                   <span className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[var(--text-secondary)] font-semibold">
-                    {item.category}
+                    {item.category === 'Compensation' ? 'Доход и бенефиты' :
+                     item.category === 'Work Environment' ? 'Условия и график' :
+                     item.category === 'Tech Stack' ? 'Стек и архитектура' :
+                     item.category === 'Growth & Team' ? 'Команда и рост' : item.category}
                   </span>
                   <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                     {item.checked ? '✓ Включено в фильтр' : 'Пропущено'}

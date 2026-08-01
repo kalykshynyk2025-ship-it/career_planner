@@ -3,6 +3,17 @@ import { getCurrencySymbol, formatSalaryWithCurrency } from './currency';
 
 const DEV_CREDIT_MARKDOWN = `> **Разработчик системы**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)`;
 
+const translateCategory = (cat: string): string => {
+  switch (cat) {
+    case 'Compensation': return 'Компенсация и Доход';
+    case 'Work Environment': return 'Условия и Формат работы';
+    case 'Tech Stack': return 'Стек и Архитектура';
+    case 'Growth & Team': return 'Команда и Профессиональный рост';
+    case 'Benefits & Culture': return 'Бенефиты и Культура';
+    default: return cat;
+  }
+};
+
 export const generateComprehensiveCareerMarkdown = (state: CareerState): string => {
   const currencySymbol = getCurrencySymbol(state.currency || 'RUB');
   const salaryFormatted = formatSalaryWithCurrency(
@@ -57,9 +68,8 @@ ${DEV_CREDIT_MARKDOWN}
 
 ${(state.notion_criteria || []).length > 0 ? (state.notion_criteria || []).map((c, i) => `
 ### ${i + 1}. **${c.title}**
-- **Статус**: ${c.checked ? '✅ [Включен в выборку]' : '❌ [Исключен]'}
-- **Приоритет**: ${c.priority || 'Обязательно'}
-- **Категория**: ${c.category}
+- **Приоритет**: ${c.priority === 'Must Have' || c.priority === 'Обязательно' ? 'Обязательно (Must Have)' : 'Желательно (Nice to Have)'}
+- **Категория**: ${translateCategory(c.category)}
 - **Подробное описание**: ${c.description || 'Параметры не указаны.'}
 `).join('\n') : '_Критерии еще не добавлены._'}
 
@@ -181,9 +191,8 @@ ${DEV_CREDIT_MARKDOWN}
 
 ${criteria.length > 0 ? criteria.map((c, i) => `
 ### ${i + 1}. **${c.title}**
-- **Статус**: ${c.checked ? '✅ [Включен в выборку]' : '❌ [Исключен]'}
-- **Приоритет**: ${c.priority || 'Обязательно'}
-- **Категория**: ${c.category}
+- **Приоритет**: ${c.priority === 'Must Have' || c.priority === 'Обязательно' ? 'Обязательно (Must Have)' : 'Желательно (Nice to Have)'}
+- **Категория**: ${translateCategory(c.category)}
 - **Подробное описание**: ${c.description || 'Параметры не указаны.'}
 `).join('\n\n---\n') : '_Критерии еще не добавлены._'}
 `;
