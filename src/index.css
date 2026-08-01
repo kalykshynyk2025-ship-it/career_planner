@@ -145,15 +145,36 @@
 }
 
 @media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   body {
-    background: #ffffff !important;
-    color: #000000 !important;
+    background: #0f172a !important;
+    color: #f8fafc !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  aside, header, nav, button, .print\:hidden {
+  /* Hide navigation, sidebar, export buttons and modals when printing main page */
+  aside, header, nav, button, [data-export-ignore], .print\:hidden {
     display: none !important;
+  }
+
+  /* Main container full print width */
+  main, #root {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
   }
 
   .print\:static {
@@ -178,95 +199,76 @@
   }
 
   .print\:bg-white {
-    background: #ffffff !important;
-    color: #000000 !important;
+    background: #0f172a !important;
+    color: #f8fafc !important;
   }
 
   .prose, .notion-prose {
-    color: #1e293b !important;
-    font-size: 10pt !important;
-    line-height: 1.5 !important;
+    color: #e2e8f0 !important;
+    font-size: 10.5pt !important;
+    line-height: 1.6 !important;
     max-width: 100% !important;
   }
 
   .prose h1 {
     font-size: 18pt !important;
     font-weight: 800 !important;
-    color: #0f172a !important;
-    border-bottom: 2px solid #0f172a !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid #3b82f6 !important;
     padding-bottom: 6px !important;
     margin-bottom: 12px !important;
     page-break-after: avoid;
   }
 
   .prose h2 {
-    font-size: 13pt !important;
+    font-size: 14pt !important;
     font-weight: 700 !important;
-    color: #1e293b !important;
-    border-bottom: 1px solid #cbd5e1 !important;
+    color: #38bdf8 !important;
+    border-bottom: 1px solid #334155 !important;
     padding-bottom: 4px !important;
-    margin-top: 16px !important;
+    margin-top: 18px !important;
     margin-bottom: 8px !important;
     page-break-after: avoid;
   }
 
   .prose h3 {
-    font-size: 11pt !important;
+    font-size: 12pt !important;
     font-weight: 600 !important;
-    color: #334155 !important;
-    margin-top: 12px !important;
+    color: #f1f5f9 !important;
+    margin-top: 14px !important;
     margin-bottom: 6px !important;
     page-break-after: avoid;
   }
 
   .prose blockquote {
-    background: #f8fafc !important;
-    border-left: 4px solid #2563eb !important;
-    color: #334155 !important;
-    padding: 8px 12px !important;
-    margin: 10px 0 !important;
+    background: #1e293b !important;
+    border-left: 4px solid #3b82f6 !important;
+    color: #cbd5e1 !important;
+    padding: 10px 14px !important;
+    margin: 12px 0 !important;
+    border-radius: 0 8px 8px 0 !important;
     font-style: normal !important;
   }
 
-  .prose table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    margin: 10px 0 !important;
-    page-break-inside: auto;
-  }
-
-  .prose tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
-  }
-
-  .prose th, .prose td {
-    border: 1px solid #cbd5e1 !important;
-    padding: 6px 10px !important;
-    text-align: left !important;
-    font-size: 9.5pt !important;
-  }
-
-  .prose th {
-    background-color: #f1f5f9 !important;
-    font-weight: 700 !important;
-    color: #0f172a !important;
-  }
-
   .prose code {
-    background: #f1f5f9 !important;
-    color: #0f172a !important;
-    padding: 2px 4px !important;
+    background: #1e293b !important;
+    color: #38bdf8 !important;
+    padding: 2px 6px !important;
     border-radius: 4px !important;
-    font-size: 9pt !important;
+    font-size: 9.5pt !important;
   }
 
   .prose ul, .prose ol {
     padding-left: 20px !important;
-    margin: 6px 0 !important;
+    margin: 8px 0 !important;
   }
 
   .prose li {
-    margin: 2px 0 !important;
+    margin: 4px 0 !important;
+  }
+
+  /* Cards avoid page breaks mid-card */
+  .bg-\[var\(--bg-card\)\], .rounded-2xl, .border {
+    page-break-inside: avoid;
   }
 }

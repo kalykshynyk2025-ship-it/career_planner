@@ -1,6 +1,8 @@
 import { CareerState } from '../types';
 import { getCurrencySymbol, formatSalaryWithCurrency } from './currency';
 
+const DEV_CREDIT_MARKDOWN = `> **Разработчик системы**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)`;
+
 export const generateComprehensiveCareerMarkdown = (state: CareerState): string => {
   const currencySymbol = getCurrencySymbol(state.currency || 'RUB');
   const salaryFormatted = formatSalaryWithCurrency(
@@ -27,7 +29,7 @@ export const generateComprehensiveCareerMarkdown = (state: CareerState): string 
 ---
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Разработчик системы**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
+${DEV_CREDIT_MARKDOWN}  
 > **Основная Карьерная Цель**: ${state.goals?.primaryGoal || 'Переход на позицию Senior ML & DS Engineer'}  
 > **Целевая Роль**: ${state.selected_position || 'Senior ML & DS Engineer'} (Резерв: ${state.alternate_position || 'Lead Data Scientist'})  
 > **Грейд**: ${state.goals?.currentGrade || 'Middle+'} ➔ **${state.goals?.targetGrade || 'Senior ML / AI Architect'}**  
@@ -41,85 +43,93 @@ export const generateComprehensiveCareerMarkdown = (state: CareerState): string 
 ## 1. ПАРАМЕТРЫ ПРОФИЛЯ, ТАРГЕТИНГА И СТЕК
 *Базовые ориентиры, грейды и сопоставление навыков*
 
-| Параметр Профиля | Значение |
-| :--- | :--- |
-| **Основная Должность** | **${state.selected_position || 'Senior ML & DS Engineer / AI Architect'}** |
-| **Запасная Роль** | ${state.alternate_position || 'Lead Data Scientist / RecSys Architect'} |
-| **Целевой Рынок** | ${state.selected_market || 'РФ / Global Remote'} |
-| **Ориентир по Доходу** | **${salaryFormatted}** |
-| **Валюта** | ${state.currency || 'RUB'} (${currencySymbol}) |
-| **Hard Skills Стек** | ${state.goals?.hardSkillsSummary || 'Python, PyTorch, LLM Fine-Tuning, MLOps, RAG, Distributed Training, Vector DBs, System Design'} |
-| **Soft Skills Стек** | ${state.goals?.softSkillsSummary || 'Technical Leadership, Agile/Scrum Mentorship, Stakeholder Management, Architecture Presentations'} |
+- **Основная Должность**: ${state.selected_position || 'Senior ML & DS Engineer / AI Architect'}
+- **Запасная Роль**: ${state.alternate_position || 'Lead Data Scientist / RecSys Architect'}
+- **Целевой Рынок**: ${state.selected_market || 'РФ / Global Remote'}
+- **Ориентир по Доходу**: ${salaryFormatted} (${state.currency || 'RUB'})
+- **Hard Skills Стек**: ${state.goals?.hardSkillsSummary || 'Python, PyTorch, LLM Fine-Tuning, MLOps, RAG, Distributed Training, Vector DBs, System Design'}
+- **Soft Skills Стек**: ${state.goals?.softSkillsSummary || 'Technical Leadership, Agile/Scrum Mentorship, Stakeholder Management, Architecture Presentations'}
 
 ---
 
-## 2. ДОСКА №1: КРИТЕРИИ ВЫБОРА КОМПАНИИ (NOTION CRITERIA)
+## 2. ДОСКА №1: КРИТЕРИИ ВЫБОРА КОМПАНИИ
 *Система фильтров и требований к потенциальному работодателю (${state.notion_criteria?.length || 0} критериев)*
 
-| # | Критерий | Статус | Приоритет | Категория | Подробности |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-${(state.notion_criteria || []).map((c, i) => 
-  `| ${i + 1} | **${c.title}** | ${c.checked ? '[Включен]' : '[Исключен]'} | \`${c.priority || 'Обязательно'}\` | ${c.category} | ${c.description || '—'} |`
-).join('\n')}
+${(state.notion_criteria || []).length > 0 ? (state.notion_criteria || []).map((c, i) => `
+### ${i + 1}. **${c.title}**
+- **Статус**: ${c.checked ? '✅ [Включен в выборку]' : '❌ [Исключен]'}
+- **Приоритет**: ${c.priority || 'Обязательно'}
+- **Категория**: ${c.category}
+- **Подробное описание**: ${c.description || 'Параметры не указаны.'}
+`).join('\n') : '_Критерии еще не добавлены._'}
 
 ---
 
 ## 3. ДОСКА №2: ТАРГЕТИРОВАННЫЙ СПИСОК КОМПАНИЙ
 *Реестр целевых работодателей по уровням (${state.selected_companies?.length || 0} компаний)*
 
-| # | Компания | Уровень / Рынок | Стек Технологий | Визовая поддержка | Карьерная ссылка | Заметки |
-| :--- | :--- | :--- | :--- | :---: | :--- | :--- |
-${(state.selected_companies || []).map((c, i) => 
-  `| ${i + 1} | **${c.name}** | ${c.tier || c.country || 'РФ'} | ${c.techStack.join(', ')} | ${c.sponsorship ? 'Да' : 'Нет'} | ${c.careerLink ? `[Ссылка](${c.careerLink})` : '—'} | ${c.notes || '—'} |`
-).join('\n')}
+${(state.selected_companies || []).length > 0 ? (state.selected_companies || []).map((c, i) => `
+### ${i + 1}. **${c.name}**
+- **Уровень / Локация**: ${c.tier || c.country || 'РФ'}
+- **Стек Технологий**: ${c.techStack.join(', ')}
+- **Визовая поддержка**: ${c.sponsorship ? 'Да (Relocation package)' : 'Нет'}
+- **Карьерная ссылка**: ${c.careerLink ? `[Перейти к вакансиям](${c.careerLink})` : 'Ссылка не указана'}
+- **Заметки**: ${c.notes || 'Заметки отсутствуют.'}
+`).join('\n') : '_Компания в целевой список еще не добавлены._'}
 
 ---
 
 ## 4. ДОСКА №3: ATS ТРЕКЕР ВАКАНСИЙ (VACANCY PIPELINE)
 *Воронка откликов и профилей вакансий (${state.selected_vacancies?.length || 0} позиций)*
 
-| # | Название Вакансии | Компания | Локация | Зарплатная вилка | Статус Воронки | ATS Match | Ссылка |
-| :--- | :--- | :--- | :--- | :--- | :---: | :---: | :--- |
-${(state.selected_vacancies || []).map((v, i) => 
-  `| ${i + 1} | **${v.title}** | ${v.company} | ${v.location} | ${formatSalaryWithCurrency(v.salaryRange, state.currency)} | \`${v.status || 'Saved'}\` | **${v.atsScore || 85}%** | ${v.link ? `[Ссылка](${v.link})` : '—'} |`
-).join('\n')}
+${(state.selected_vacancies || []).length > 0 ? (state.selected_vacancies || []).map((v, i) => `
+### ${i + 1}. **${v.title}**
+- **Компания**: ${v.company}
+- **Локация & Формат**: ${v.location}
+- **Предлагаемый доход**: ${formatSalaryWithCurrency(v.salaryRange, state.currency)}
+- **Текущий Статус Воронки**: ${v.status || 'Saved'}
+- **ATS Соответствие (Match Score)**: ${v.atsScore || 85}%
+- **Прямая Ссылка**: ${v.link ? `[Открыть вакансию](${v.link})` : 'Ссылка не указана'}
+`).join('\n') : '_Вакансии в ATS трекер еще не добавлены._'}
 
 ---
 
 ## 5. ДОСКА №4: КАРЬЕРНЫЕ РАССЫЛКИ И ИСТОЧНИКИ ВАКАНСИЙ
 *Автоматический мониторинг дайджестов (${state.newsletters?.length || 0} источников)*
 
-| # | Источник / Канал | Компания | Частота | Статус | Ссылка |
-| :--- | :--- | :--- | :--- | :---: | :--- |
-${(state.newsletters || []).map((n, i) => 
-  `| ${i + 1} | **${n.title}** | ${n.companyName} | ${n.frequency} | ${n.subscribed ? '[Активна]' : '[Пауза]'} | ${n.link ? `[Дайджест](${n.link})` : '—'} |`
-).join('\n')}
+${(state.newsletters || []).length > 0 ? (state.newsletters || []).map((n, i) => `
+### ${i + 1}. **${n.title}**
+- **Источник / Сообщество**: ${n.companyName}
+- **Частота выпусков**: ${n.frequency}
+- **Статус подписки**: ${n.subscribed ? '🟢 [Активна]' : '🟡 [Пауза]'}
+- **Ссылка на дайджест**: ${n.link ? `[Перейти к каналу/рассылке](${n.link})` : 'Ссылка не указана'}
+`).join('\n') : '_Источники рассылок еще не добавлены._'}
 
 ---
 
 ## 6. ДОСКА №5: SWOT-АНАЛИЗ ПРОФИЛЯ И ЭКСПЕРТНЫЕ ОТВЕТЫ
 *Стратегическая оценка профиля (Факторов: ${swotTotalCount})*
 
-- **Strengths (Сильные стороны)**:
-${(state.swot?.strengths || []).map(s => `  - ${s}`).join('\n')}
+### 1. Сильные стороны (Strengths)
+${(state.swot?.strengths || []).map(s => `- ${s}`).join('\n')}
 
-- **Weaknesses (Слабые стороны)**:
-${(state.swot?.weaknesses || []).map(w => `  - ${w}`).join('\n')}
+### 2. Слабые стороны (Weaknesses)
+${(state.swot?.weaknesses || []).map(w => `- ${w}`).join('\n')}
 
-- **Opportunities (Рыночные возможности)**:
-${(state.swot?.opportunities || []).map(o => `  - ${o}`).join('\n')}
+### 3. Рыночные возможности (Opportunities)
+${(state.swot?.opportunities || []).map(o => `- ${o}`).join('\n')}
 
-- **Threats (Риски и барьеры)**:
-${(state.swot?.threats || []).map(t => `  - ${t}`).join('\n')}
+### 4. Риски и барьеры (Threats)
+${(state.swot?.threats || []).map(t => `- ${t}`).join('\n')}
 
 ${(swotAnswers.strengths?.length || swotAnswers.weaknesses?.length || swotAnswers.opportunities?.length || swotAnswers.threats?.length) ? `
-### Экспертные ответы на стратегические вопросы:
+### 5. Экспертные ответы на карьерные вопросы
 ${[
   ...(swotAnswers.strengths || []), 
   ...(swotAnswers.weaknesses || []), 
   ...(swotAnswers.opportunities || []), 
   ...(swotAnswers.threats || [])
-].map(qa => `- **${qa.questionText}**\n  > *Ответ:* ${qa.answerText}`).join('\n\n')}
+].map(qa => `- **Вопрос**: ${qa.questionText}\n  > **Экспертный Ответ**: ${qa.answerText}`).join('\n\n')}
 ` : ''}
 
 ---
@@ -141,7 +151,8 @@ ${Object.entries(state.stepOutputs || {}).length > 0
 ## 8. ИТОГОВЫЙ ПЛАН И РЕКОМЕНДАЦИИ
 - Все данные обновлены в реальном времени на основе текущего состояния заполненных досок.
 - Документ готов к выгрузке в PDF, экспорт в Notion или отправке ментору.
-*Документ сгенерирован автоматически системой ${state.appName || 'ML & DS Career OS'}.*
+
+*Разработчик системы: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)*
 `;
 };
 
@@ -163,14 +174,18 @@ export const generateCriteriaBoardMarkdown = (state: CareerState): string => {
 *Карьерная Стратегия: ${state.selected_position || 'Senior ML & DS Engineer'}*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
+${DEV_CREDIT_MARKDOWN}  
 > **Всего критериев**: ${criteria.length}
 
-| # | Критерий | Статус | Приоритет | Категория | Подробное описание |
-| :--- | :--- | :---: | :--- | :--- | :--- |
-${criteria.map((c, i) => 
-  `| ${i + 1} | **${c.title}** | ${c.checked ? '[Включен]' : '[Исключен]'} | \`${c.priority || 'Обязательно'}\` | ${c.category} | ${c.description || '—'} |`
-).join('\n')}
+---
+
+${criteria.length > 0 ? criteria.map((c, i) => `
+### ${i + 1}. **${c.title}**
+- **Статус**: ${c.checked ? '✅ [Включен в выборку]' : '❌ [Исключен]'}
+- **Приоритет**: ${c.priority || 'Обязательно'}
+- **Категория**: ${c.category}
+- **Подробное описание**: ${c.description || 'Параметры не указаны.'}
+`).join('\n\n---\n') : '_Критерии еще не добавлены._'}
 `;
 };
 
@@ -180,14 +195,19 @@ export const generateCompaniesBoardMarkdown = (state: CareerState): string => {
 *Карьерный Стек & Целевой Рынок: ${state.selected_market || 'РФ / Global Remote'}*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
+${DEV_CREDIT_MARKDOWN}  
 > **Всего компаний**: ${companies.length}
 
-| # | Компания | Уровень / Страна | Стек Технологий | Визовая поддержка | Карьерная ссылка | Заметки |
-| :--- | :--- | :--- | :--- | :---: | :--- | :--- |
-${companies.map((c, i) => 
-  `| ${i + 1} | **${c.name}** | ${c.tier || c.country || 'РФ'} | ${c.techStack.join(', ')} | ${c.sponsorship ? 'Да' : 'Нет'} | ${c.careerLink ? `[Ссылка](${c.careerLink})` : '—'} | ${c.notes || '—'} |`
-).join('\n')}
+---
+
+${companies.length > 0 ? companies.map((c, i) => `
+### ${i + 1}. **${c.name}**
+- **Уровень / Страна**: ${c.tier || c.country || 'РФ'}
+- **Стек Технологий**: ${c.techStack.join(', ')}
+- **Визовая поддержка**: ${c.sponsorship ? 'Да (Relocation package)' : 'Нет'}
+- **Карьерная ссылка**: ${c.careerLink ? `[Перейти к вакансиям](${c.careerLink})` : 'Ссылка не указана'}
+- **Заметки**: ${c.notes || 'Заметки отсутствуют.'}
+`).join('\n\n---\n') : '_Компании еще не добавлены._'}
 `;
 };
 
@@ -197,14 +217,20 @@ export const generateVacanciesBoardMarkdown = (state: CareerState): string => {
 *Позиция: ${state.selected_position || 'Senior ML & DS Engineer'} | Доход: ${state.goals?.expectedSalary || '380 000 - 550 000 ₽'}*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
+${DEV_CREDIT_MARKDOWN}  
 > **Всего вакансий в воронке**: ${vacancies.length}
 
-| # | Название Вакансии | Компания | Локация | Зарплатная вилка | Статус Воронки | ATS Match | Ссылка |
-| :--- | :--- | :--- | :--- | :--- | :---: | :---: | :--- |
-${vacancies.map((v, i) => 
-  `| ${i + 1} | **${v.title}** | ${v.company} | ${v.location} | ${formatSalaryWithCurrency(v.salaryRange, state.currency)} | \`${v.status || 'Saved'}\` | **${v.atsScore || 85}%** | ${v.link ? `[Ссылка](${v.link})` : '—'} |`
-).join('\n')}
+---
+
+${vacancies.length > 0 ? vacancies.map((v, i) => `
+### ${i + 1}. **${v.title}**
+- **Компания**: ${v.company}
+- **Локация**: ${v.location}
+- **Зарплатная вилка**: ${formatSalaryWithCurrency(v.salaryRange, state.currency)}
+- **Статус Воронки**: ${v.status || 'Saved'}
+- **ATS Match Score**: ${v.atsScore || 85}%
+- **Ссылка**: ${v.link ? `[Открыть вакансию](${v.link})` : 'Ссылка не указана'}
+`).join('\n\n---\n') : '_Вакансии еще не добавлены._'}
 `;
 };
 
@@ -214,14 +240,18 @@ export const generateNewslettersBoardMarkdown = (state: CareerState): string => 
 *Мониторинг позиций и источников*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
+${DEV_CREDIT_MARKDOWN}  
 > **Всего источников**: ${newsletters.length}
 
-| # | Источник / Канал | Компания / Сообщество | Частота | Статус Подписки | Ссылка |
-| :--- | :--- | :--- | :--- | :---: | :--- |
-${newsletters.map((n, i) => 
-  `| ${i + 1} | **${n.title}** | ${n.companyName} | ${n.frequency} | ${n.subscribed ? '[Активна]' : '[Пауза]'} | ${n.link ? `[Дайджест](${n.link})` : '—'} |`
-).join('\n')}
+---
+
+${newsletters.length > 0 ? newsletters.map((n, i) => `
+### ${i + 1}. **${n.title}**
+- **Компания / Сообщество**: ${n.companyName}
+- **Частота**: ${n.frequency}
+- **Статус Подписки**: ${n.subscribed ? '🟢 [Активна]' : '🟡 [Пауза]'}
+- **Ссылка**: ${n.link ? `[Дайджест](${n.link})` : 'Ссылка не указана'}
+`).join('\n\n---\n') : '_Источники еще не добавлены._'}
 `;
 };
 
@@ -233,7 +263,9 @@ export const generateSwotBoardMarkdown = (state: CareerState): string => {
 *Оценка сильных и слабых сторон, возможностей и рисков*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)
+${DEV_CREDIT_MARKDOWN}
+
+---
 
 ### 1. Сильные стороны (Strengths)
 ${(swot.strengths || []).map(s => `- ${s}`).join('\n')}
@@ -248,13 +280,15 @@ ${(swot.opportunities || []).map(o => `- ${o}`).join('\n')}
 ${(swot.threats || []).map(t => `- ${t}`).join('\n')}
 
 ${(swotAnswers.strengths?.length || swotAnswers.weaknesses?.length || swotAnswers.opportunities?.length || swotAnswers.threats?.length) ? `
+---
+
 ### 5. Ответы на экспертные карьерные вопросы
 ${[
   ...(swotAnswers.strengths || []), 
   ...(swotAnswers.weaknesses || []), 
   ...(swotAnswers.opportunities || []), 
   ...(swotAnswers.threats || [])
-].map(qa => `- **${qa.questionText}**\n  > *Ответ:* ${qa.answerText}`).join('\n\n')}
+].map(qa => `- **${qa.questionText}**\n  > **Ответ:** ${qa.answerText}`).join('\n\n')}
 ` : ''}
 `;
 };
@@ -271,10 +305,12 @@ export const generateAgileTrackMarkdown = (state: CareerState): string => {
 *Карьерный спринт-поток*
 
 > **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
-> **Разработчик**: КАЛЫК ШЫНЫК | WEB STUDIO & GAMIFICATION (https://kalyk-shynyk-web-studio.vercel.app/)  
+${DEV_CREDIT_MARKDOWN}  
 > **Общий прогресс**: ${completedCount} / 8 этапов (${progressPercent}%)  
 > **Текущий активный шаг**: #${currentStepNum}  
 > **Завершенные шаги**: ${sanitizedCompletedSteps.length > 0 ? sanitizedCompletedSteps.map(s => `#${s}`).join(', ') : 'Нет'}
+
+---
 
 ### Результаты выходов по шагам (Outputs Log):
 ${Object.entries(state.stepOutputs || {}).length > 0 
@@ -284,4 +320,3 @@ ${Object.entries(state.stepOutputs || {}).length > 0
   : '_Артефакты этапов обновлены в системе._'}
 `;
 };
-

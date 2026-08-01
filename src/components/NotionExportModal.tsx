@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, FileText, Printer, Download, Layers, Image, ExternalLink } from 'lucide-react';
+import { X, Copy, Check, FileText, Printer, Download, Layers, ExternalLink } from 'lucide-react';
 import { CareerState } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { generateComprehensiveCareerMarkdown, downloadMarkdownFile } from '../utils/exportMarkdown';
-import { exportElementToPng, exportAllBoardElementsToPng } from '../utils/exportPng';
 
 interface NotionExportModalProps {
   isOpen: boolean;
@@ -17,7 +16,6 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
   state,
 }) => {
   const [copied, setCopied] = useState(false);
-  const [isExportingPng, setIsExportingPng] = useState(false);
 
   if (!isOpen) return null;
 
@@ -30,24 +28,9 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
   };
 
   const handleDownloadMd = () => {
-    const filename = `career_strategy_consolidated_${new Date().toISOString().slice(0, 10)}.md`;
-    downloadMarkdownFile(filename, fullMarkdown);
-  };
-
-  const handleDownloadPngModal = async () => {
-    setIsExportingPng(true);
     const dateStr = new Date().toISOString().slice(0, 10);
-    await exportElementToPng('consolidated-modal-content', `Career_Strategy_Consolidated_${dateStr}.png`, {
-      backgroundColor: '#020617',
-      pixelRatio: 2
-    });
-    setIsExportingPng(false);
-  };
-
-  const handleDownloadAllBoardPngs = async () => {
-    setIsExportingPng(true);
-    await exportAllBoardElementsToPng(state.appName);
-    setIsExportingPng(false);
+    const filename = `Career_Strategy_${state.appName || 'OS'}_${dateStr}.md`;
+    downloadMarkdownFile(filename, fullMarkdown);
   };
 
   const handlePrintPdf = () => {
@@ -55,7 +38,7 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm print:p-0 print:bg-white print:static">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm print:p-0 print:bg-white print:static">
       <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl print:max-h-none print:shadow-none print:border-none print:w-full">
         
         {/* Header */}
@@ -66,9 +49,9 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="font-bold text-white text-base">Экспорт единого карьерного документа</h2>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[10px] font-bold">
-                  Все заполненные доски и блоки
+                <h3 className="font-bold text-white text-base">Экспорт Стратегического Отчета (Notion / PDF / MD)</h3>
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-medium">
+                  Все заполненные доски
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -77,55 +60,35 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
             </div>
           </div>
           
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center space-x-2 w-full md:w-auto justify-end">
             <button
-              onClick={handleDownloadPngModal}
-              disabled={isExportingPng}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
-              title="Скачать документ как изображение PNG"
+              onClick={handlePrintPdf}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              title="Печать или сохранение страницы со всеми стилями в PDF"
             >
-              <Image className="w-4 h-4" />
-              <span>PNG Снимок</span>
+              <Printer className="w-4 h-4" />
+              <span>Печать / В PDF</span>
             </button>
 
             <button
-              onClick={handleDownloadAllBoardPngs}
-              disabled={isExportingPng}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
-              title="Скачать все доски по отдельности в PNG"
+              onClick={handleDownloadMd}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
             >
-              <Image className="w-4 h-4" />
-              <span>Все PNG</span>
+              <Download className="w-4 h-4" />
+              <span>Скачать .md</span>
             </button>
             
             <button
-              onClick={handleDownloadMd}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
-              title="Скачать файл в формате Markdown (.md)"
-            >
-              <Download className="w-4 h-4 text-blue-400" />
-              <span>Скачать .md</span>
-            </button>
-
-            <button
-              onClick={handlePrintPdf}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
-            >
-              <Printer className="w-4 h-4" />
-              <span>Печать / PDF</span>
-            </button>
-
-            <button
               onClick={handleCopy}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition-colors cursor-pointer border border-slate-700"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
-              <span>{copied ? 'Скопировано!' : 'Скопировать'}</span>
+              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
+              <span>{copied ? 'Скопировано!' : 'Копировать'}</span>
             </button>
 
-            <button
+            <button 
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 cursor-pointer"
+              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -170,4 +133,3 @@ export const NotionExportModal: React.FC<NotionExportModalProps> = ({
     </div>
   );
 };
-
