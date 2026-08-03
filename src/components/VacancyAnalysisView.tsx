@@ -38,168 +38,268 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
 
   const handleFill7Vacancies = () => {
     const defaultAnalyses: VacancyRequirementAnalysis[] = [
-      /* Вакансия 1: Авито */
-      {
-        id: "va_avito_1",
-        vacancyTitle: "Senior Fullstack Engineer (React / Node.js)",
-        company: "Авито",
-        item: "Уверенное владение React 18, TypeScript, Next.js и SSR",
-        type: "Требование",
-        status: "Владею",
-        achievementMethod: "Уже владею",
-        notes: "4+ года разработки на продуктовых React/TS проектах"
-      },
-      {
-        id: "va_avito_2",
-        vacancyTitle: "Senior Fullstack Engineer (React / Node.js)",
-        company: "Авито",
-        item: "Проектирование архитектуры микрофронтендов и System Design",
-        type: "Требование",
-        status: "Частично",
-        achievementMethod: "Наставник",
-        notes: "Проработка паттернов шардинга с ментором по архитектуре"
-      },
-      {
-        id: "va_avito_3",
-        vacancyTitle: "Senior Fullstack Engineer (React / Node.js)",
-        company: "Авито",
-        item: "Проведение код-ревью, кросс-ревью архитектурных решений и митапов",
-        type: "Обязанность",
-        status: "Владею",
-        achievementMethod: "Уже владею",
-        notes: "Опыт проведения ревью на текущем месте работы"
-      },
-
-      /* Вакансия 2: Яндекс */
-      {
-        id: "va_yandex_1",
-        vacancyTitle: "Lead Frontend Engineer (Web Platform)",
-        company: "Яндекс",
-        item: "Оптимизация Core Web Vitals, профилирование производительности и память",
-        type: "Требование",
-        status: "Частично",
-        achievementMethod: "Обучение",
-        notes: "Пройти курс по углубленному браузерному перформансу Chrome DevTools"
-      },
-      {
-        id: "va_yandex_2",
-        vacancyTitle: "Lead Frontend Engineer (Web Platform)",
-        company: "Яндекс",
-        item: "Развитие общекорпоративной дизайн-системы и UI-кита компонентов",
-        type: "Обязанность",
-        status: "Владею",
-        achievementMethod: "Уже владею",
-        notes: "Создавал библиотеку компонентов на Storybook и Tailwind"
-      },
-
-      /* Вакансия 3: Т-Банк */
+      /* Вакансия 1: Т-Банк — Intern Machine Learning Engineer */
       {
         id: "va_tbank_1",
-        vacancyTitle: "Senior React Developer (Core Banking UI)",
+        vacancyTitle: "Intern Machine Learning Engineer (Risk & Credit ML)",
         company: "Т-Банк",
-        item: "Соблюдение правил безопасной веб-разработки OWASP Top 10",
+        item: "Уверенное знание Python 3, библиотеки Pandas, NumPy и Scikit-Learn",
         type: "Требование",
-        status: "Не владею",
-        achievementMethod: "Обучение",
-        notes: "Пройти сертифицированный воркшоп по веб-безопасности и XSS/CSRF защите"
+        status: "Владею",
+        achievementMethod: "Уже владею",
+        notes: "Базовый стек обработки данных и классических ML-моделей освоен на практике"
       },
       {
         id: "va_tbank_2",
-        vacancyTitle: "Senior React Developer (Core Banking UI)",
+        vacancyTitle: "Intern Machine Learning Engineer (Risk & Credit ML)",
         company: "Т-Банк",
-        item: "Проектирование сложного состояния с асинхронными потоками (RxJS / Zustand)",
-        type: "Обязанность",
-        status: "Владею",
-        achievementMethod: "Уже владею",
-        notes: "Уверенный практический опыт с Zustand и Redux Toolkit"
-      },
-
-      /* Вакансия 4: Ozon */
-      {
-        id: "va_ozon_1",
-        vacancyTitle: "Senior Frontend Engineer (E-commerce Core)",
-        company: "Ozon",
-        item: "Опыт работы с GraphQL / REST API и сгенерированными типами клиентов",
+        item: "Понимание баз данных PostgreSQL и написание сложных SQL-запросов (JOIN, GROUP BY, Window Functions)",
         type: "Требование",
         status: "Владею",
         achievementMethod: "Уже владею",
-        notes: "Интегрировал GraphQL Apollo Client на нескольких проектах"
+        notes: "Практический опыт с SQL-запросами на пет-проектах и учебных курсах"
       },
       {
-        id: "va_ozon_2",
-        vacancyTitle: "Senior Frontend Engineer (E-commerce Core)",
-        company: "Ozon",
-        item: "Настройка Module Federation (Webpack/Vite) для независимых релизов",
-        type: "Обязанность",
-        status: "Не владею",
-        achievementMethod: "Фриланс-проект",
-        notes: "Сделать тестовый пет-проект с двумя микрофронтендами через Vite Module Federation"
-      },
-
-      /* Вакансия 5: ВК (VK) */
-      {
-        id: "va_vk_1",
-        vacancyTitle: "Senior Web Application Engineer (VK Video)",
-        company: "ВК (VK)",
-        item: "Разработка высоконагруженных веб-плееров, WebSockets и WebRTC соединения",
+        id: "va_tbank_3",
+        vacancyTitle: "Intern Machine Learning Engineer (Risk & Credit ML)",
+        company: "Т-Банк",
+        item: "Знание основ высшей математики, теории вероятностей и математической статистики",
         type: "Требование",
-        status: "Не владею",
-        achievementMethod: "Стажировка",
-        notes: "Принять участие в хакатоне или внутреннем пилоте по WebSockets & видео"
+        status: "Владею",
+        achievementMethod: "Уже владею",
+        notes: "Фундаментальная университетская база мат. анализа, линала и мат. статистики"
       },
       {
-        id: "va_vk_2",
-        vacancyTitle: "Senior Web Application Engineer (VK Video)",
-        company: "ВК (VK)",
-        item: "Кроссбраузерная и кроссплатформенная верстка с поддержкой Touch & TV",
-        type: "Обязанность",
-        status: "Частично",
-        achievementMethod: "Опыт на текущем месте",
-        notes: "Взять на текущей работе задачи по адаптации под планшеты и мобильные web"
-      },
-
-      /* Вакансия 6: Альфа-Банк */
-      {
-        id: "va_alfa_1",
-        vacancyTitle: "Tech Lead Fullstack (Fintech UI & BFF)",
-        company: "Альфа-Банк",
-        item: "Проектирование Node.js BFF (Backend For Frontend) сервисов и PostgreSQL",
-        type: "Требование",
-        status: "Частично",
-        achievementMethod: "Опыт на текущем месте",
-        notes: "Инициировать внедрение BFF слоя в текущем продуктовом спринте"
-      },
-      {
-        id: "va_alfa_2",
-        vacancyTitle: "Tech Lead Fullstack (Fintech UI & BFF)",
-        company: "Альфа-Банк",
-        item: "Управление продуктовой командой разработки от 5 человек, проведение 1:1",
+        id: "va_tbank_4",
+        vacancyTitle: "Intern Machine Learning Engineer (Risk & Credit ML)",
+        company: "Т-Банк",
+        item: "Разработка и валидация скоринговых ML-моделей кредитного риска (Gradient Boosting / CatBoost)",
         type: "Обязанность",
         status: "Частично",
         achievementMethod: "Наставник",
-        notes: "Регулярные сессии с ментором-тимлидом по soft skills и менеджменту"
+        notes: "Проработка нюансов валидации и подбора гиперпараметров с ментором по DS"
+      },
+      {
+        id: "va_tbank_5",
+        vacancyTitle: "Intern Machine Learning Engineer (Risk & Credit ML)",
+        company: "Т-Банк",
+        item: "Написание юнит-тестов и интеграционных тестов для ML-кода на pytest",
+        type: "Обязанность",
+        status: "Частично",
+        achievementMethod: "Обучение",
+        notes: "Изучить паттерны тестирования датасетов и ML-пайплайнов на pytest"
       },
 
-      /* Вакансия 7: Лаборатория Касперского */
+      /* Вакансия 2: Яндекс — Junior Data Scientist */
       {
-        id: "va_kaspersky_1",
-        vacancyTitle: "Senior Frontend Architect (Security Products)",
-        company: "Лаборатория Касперского",
-        item: "Написание строго типизированных библиотек, плагинов и внешних SDK",
+        id: "va_yandex_1",
+        vacancyTitle: "Junior Data Scientist (NLP / LLM Search)",
+        company: "Яндекс",
+        item: "Опыт работы с фреймворками глубокого обучения PyTorch и Hugging Face Transformers",
+        type: "Требование",
+        status: "Частично",
+        achievementMethod: "Обучение",
+        notes: "Прохождение углубленного практического курса по PyTorch и Hugging Face"
+      },
+      {
+        id: "va_yandex_2",
+        vacancyTitle: "Junior Data Scientist (NLP / LLM Search)",
+        company: "Яндекс",
+        item: "Понимание архитектур Transformer (BERT, RoBERTa, GPT) и методик fine-tuning (LoRA, PEFT)",
+        type: "Требование",
+        status: "Не владею",
+        achievementMethod: "Обучение",
+        notes: "Разбор архитектуры Transformer и практическая донастройка LLM на HuggingFace"
+      },
+      {
+        id: "va_yandex_3",
+        vacancyTitle: "Junior Data Scientist (NLP / LLM Search)",
+        company: "Яндекс",
+        item: "Предобработка, чистка и токенизация текстовых корпусов больших объемов (NLP pipelines)",
+        type: "Обязанность",
+        status: "Владею",
+        achievementMethod: "Уже владею",
+        notes: "Опыт очистки, лемматизации и токенизации русскоязычных текстов на Python"
+      },
+      {
+        id: "va_yandex_4",
+        vacancyTitle: "Junior Data Scientist (NLP / LLM Search)",
+        company: "Яндекс",
+        item: "Оценка качества ранжирования поисковой выдачи с использованием метрик NDCG, MRR, MAP",
+        type: "Обязанность",
+        status: "Не владею",
+        achievementMethod: "Наставник",
+        notes: "Разбор метрик ранжирования поисковых моделей с ментором из Яндекса"
+      },
+
+      /* Вакансия 3: Ozon — Junior ML Engineer */
+      {
+        id: "va_ozon_1",
+        vacancyTitle: "Junior ML Engineer (E-commerce Personalization)",
+        company: "Ozon",
+        item: "Опыт построения рекомендательных систем (Collaborative Filtering, Two-Tower Models)",
+        type: "Требование",
+        status: "Не владею",
+        achievementMethod: "Фриланс-проект",
+        notes: "Создание пет-проекта рекомендательного сервиса на алгоритмах фильтрации"
+      },
+      {
+        id: "va_ozon_2",
+        vacancyTitle: "Junior ML Engineer (E-commerce Personalization)",
+        company: "Ozon",
+        item: "Знание классических алгоритмов градиентного бустинга (CatBoost, LightGBM, XGBoost)",
         type: "Требование",
         status: "Владею",
         achievementMethod: "Уже владею",
-        notes: "Опубликовал несколько npm пакетов со строгими типами TypeScript"
+        notes: "Уверенный практический опыт подбора признаков и гипепараметров в CatBoost"
       },
       {
-        id: "va_kaspersky_2",
-        vacancyTitle: "Senior Frontend Architect (Security Products)",
-        company: "Лаборатория Касперского",
-        item: "Внедрение автоматических статических анализаторов и контролей безопасности",
+        id: "va_ozon_3",
+        vacancyTitle: "Junior ML Engineer (E-commerce Personalization)",
+        company: "Ozon",
+        item: "Проведение A/B тестирования моделей рекомендаций и расчет статистической значимости",
+        type: "Обязанность",
+        status: "Частично",
+        achievementMethod: "Обучение",
+        notes: "Изучение методологии A/B тестов, расчета размерности выборки и p-value"
+      },
+      {
+        id: "va_ozon_4",
+        vacancyTitle: "Junior ML Engineer (E-commerce Personalization)",
+        company: "Ozon",
+        item: "Упаковка ML-сервисов в Docker контейнеры и деплой REST/gRPC API на FastAPI",
+        type: "Обязанность",
+        status: "Владею",
+        achievementMethod: "Уже владею",
+        notes: "Деплой сервисов с инференсом ML-моделей в Docker контейнерах"
+      },
+
+      /* Вакансия 4: Авито — Intern ML Engineer */
+      {
+        id: "va_avito_1",
+        vacancyTitle: "Intern ML Engineer (Computer Vision & Moderation)",
+        company: "Авито",
+        item: "Базовые знания компьютерного зрения (CV), работа с библиотеками OpenCV и torchvision",
+        type: "Требование",
+        status: "Частично",
+        achievementMethod: "Обучение",
+        notes: "Курс по базовым алгоритмам компьютерного зрения и обработке изображений"
+      },
+      {
+        id: "va_avito_2",
+        vacancyTitle: "Intern ML Engineer (Computer Vision & Moderation)",
+        company: "Авито",
+        item: "Опыт работы с архитектурами свёрточных сетей CNN (ResNet, EfficientNet) и детекторов (YOLO)",
+        type: "Требование",
+        status: "Не владею",
+        achievementMethod: "Стажировка",
+        notes: "Закрепление практических навыков детекции и классификации на стажировке"
+      },
+      {
+        id: "va_avito_3",
+        vacancyTitle: "Intern ML Engineer (Computer Vision & Moderation)",
+        company: "Авито",
+        item: "Разметка, сбор и аугментация датасетов изображений для обучения нейросетей модерации",
+        type: "Обязанность",
+        status: "Владею",
+        achievementMethod: "Уже владею",
+        notes: "Опыт аугментации данных с помощью Albumentation и подготовки выборок"
+      },
+
+      /* Вакансия 5: Сбер — Junior Data Scientist */
+      {
+        id: "va_sber_1",
+        vacancyTitle: "Junior Data Scientist (GigaChat & Predictive Analytics)",
+        company: "Сбер",
+        item: "Работа с инструментами трекинга ML-экспериментов (MLflow, Weights & Biases)",
+        type: "Требование",
+        status: "Частично",
+        achievementMethod: "Фриланс-проект",
+        notes: "Внедрение MLflow в трекинг параметров моделей собственного пет-проекта"
+      },
+      {
+        id: "va_sber_2",
+        vacancyTitle: "Junior Data Scientist (GigaChat & Predictive Analytics)",
+        company: "Сбер",
+        item: "Опыт проектирования Feature Store и оптимизации витрин признаков для ML",
+        type: "Требование",
+        status: "Не владею",
+        achievementMethod: "Опыт на текущем месте",
+        notes: "Изучение концепции Feature Store и витрин данных на текущих проектах"
+      },
+      {
+        id: "va_sber_3",
+        vacancyTitle: "Junior Data Scientist (GigaChat & Predictive Analytics)",
+        company: "Сбер",
+        item: "Разработка и оркестрация ML-пайплайнов в Apache Airflow",
         type: "Обязанность",
         status: "Не владею",
         achievementMethod: "Обучение",
-        notes: "Изучить интеграцию SonarQube и Snyk в CI/CD пайплайн"
+        notes: "Прохождение курса по дата-инженерии и написанию DAG в Airflow"
+      },
+
+      /* Вакансия 6: ВК (VK) — Intern ML / Deep Learning Developer */
+      {
+        id: "va_vk_1",
+        vacancyTitle: "Intern ML / Deep Learning Developer (Audio & Video)",
+        company: "ВК (VK)",
+        item: "Понимание работы асинхронного Python (asyncio) и микросервисной архитектуры",
+        type: "Требование",
+        status: "Владею",
+        achievementMethod: "Уже владею",
+        notes: "Написание асинхронных микросервисов на FastAPI / Python"
+      },
+      {
+        id: "va_vk_2",
+        vacancyTitle: "Intern ML / Deep Learning Developer (Audio & Video)",
+        company: "ВК (VK)",
+        item: "Знание методов обработки цифровых сигналов и получения аудио/видео эмбеддингов",
+        type: "Требование",
+        status: "Не владею",
+        achievementMethod: "Стажировка",
+        notes: "Изучение методов извлечения звуковых фичей (Mel-spectrograms) на стажировке"
+      },
+      {
+        id: "va_vk_3",
+        vacancyTitle: "Intern ML / Deep Learning Developer (Audio & Video)",
+        company: "ВК (VK)",
+        item: "Оптимизация инференса моделей глубокого обучения с помощью ONNX Runtime и TensorRT",
+        type: "Обязанность",
+        status: "Не владею",
+        achievementMethod: "Наставник",
+        notes: "Отработка конвертации PyTorch моделей в ONNX c наставником"
+      },
+
+      /* Вакансия 7: Лаборатория Касперского — Junior AI Research Engineer */
+      {
+        id: "va_kaspersky_1",
+        vacancyTitle: "Junior AI Research Engineer (Threat Detection ML)",
+        company: "Лаборатория Касперского",
+        item: "Уверенное владение Git, Linux (Bash), Docker и принципами воспроизводимости ML-исследований",
+        type: "Требование",
+        status: "Владею",
+        achievementMethod: "Уже владею",
+        notes: "Системная работа в Linux, виртуализация в Docker и версионирование в Git"
+      },
+      {
+        id: "va_kaspersky_2",
+        vacancyTitle: "Junior AI Research Engineer (Threat Detection ML)",
+        company: "Лаборатория Касперского",
+        item: "Знание алгоритмов обнаружения аномалий (Isolation Forest, Autoencoders, One-Class SVM)",
+        type: "Требование",
+        status: "Частично",
+        achievementMethod: "Обучение",
+        notes: "Курс по поску аномалий и обучение автоэнкодеров в PyTorch"
+      },
+      {
+        id: "va_kaspersky_3",
+        vacancyTitle: "Junior AI Research Engineer (Threat Detection ML)",
+        company: "Лаборатория Касперского",
+        item: "Анализ системных логов и поиск аномальных паттернов с помощью алгоритмов ML",
+        type: "Обязанность",
+        status: "Частично",
+        achievementMethod: "Опыт на текущем месте",
+        notes: "Разбор реальных логов кибер-угроз на алгоритмах классического машинного обучения"
       }
     ];
 
