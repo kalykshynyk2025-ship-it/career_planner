@@ -104,7 +104,18 @@ ${(state.selected_vacancies || []).length > 0 ? (state.selected_vacancies || [])
 
 ---
 
-## 5. ДОСКА №4: КАРЬЕРНЫЕ РАССЫЛКИ И ИСТОЧНИКИ ВАКАНСИЙ
+## 5. ТАБЛИЦА «АНАЛИЗ ВАКАНСИЙ» (ТРЕБОВАНИЯ, ОБЯЗАННОСТИ И СПОСОБЫ ДОСТИЖЕНИЯ)
+*Детальный разбор 7+ желаемых вакансий, проверка владения и способы закрытия гэпов (${state.vacancy_analyses?.length || 0} пунктов)*
+
+| Компания & Вакансия | Требование / Обязанность | Тип | Статус владения | Способ достижения | Заметки / План |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+${(state.vacancy_analyses || []).length > 0 ? (state.vacancy_analyses || []).map(a => 
+  `| **${a.company}**<br/>_${a.vacancyTitle}_ | ${a.item} | ${a.type || 'Требование'} | ${a.status === 'Владею' ? '🟢 Владею' : a.status === 'Частично' ? '🟡 Частично' : '🔴 Не владею'} | **${a.achievementMethod}** | ${a.notes || '—'} |`
+).join('\n') : '| — | _Анализ вакансий еще не проведен_ | — | — | — | — |'}
+
+---
+
+## 6. ДОСКА №4: КАРЬЕРНЫЕ РАССЫЛКИ И ИСТОЧНИКИ ВАКАНСИЙ
 *Автоматический мониторинг дайджестов (${state.newsletters?.length || 0} источников)*
 
 ${(state.newsletters || []).length > 0 ? (state.newsletters || []).map((n, i) => `
@@ -327,5 +338,24 @@ ${Object.entries(state.stepOutputs || {}).length > 0
       .filter(([stepNum]) => Number(stepNum) >= 1 && Number(stepNum) <= 8)
       .map(([stepNum, text]) => `#### Этап #${stepNum}\n${text}`).join('\n\n')
   : '_Артефакты этапов обновлены в системе._'}
+`;
+};
+
+export const generateVacancyAnalysisMarkdown = (state: CareerState): string => {
+  const list = state.vacancy_analyses || [];
+  return `# ТАБЛИЦА «АНАЛИЗ ВАКАНСИЙ»
+*Анализ выписанных требований и обязанностей из 7+ желаемых вакансий*
+
+> **Дата экспорта**: ${new Date().toLocaleDateString('ru-RU')}  
+${DEV_CREDIT_MARKDOWN}  
+> **Всего проанализировано пунктов**: ${list.length}
+
+---
+
+| Компания & Вакансия | Требование / Обязанность | Тип | Статус владения | Способ достижения | Заметки / План |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+${list.length > 0 ? list.map(a => 
+  `| **${a.company}**<br/>_${a.vacancyTitle}_ | ${a.item} | ${a.type || 'Требование'} | ${a.status === 'Владею' ? '🟢 Владею' : a.status === 'Частично' ? '🟡 Частично' : '🔴 Не владею'} | **${a.achievementMethod}** | ${a.notes || '—'} |`
+).join('\n') : '| — | _Данные отсутствуют_ | — | — | — | — |'}
 `;
 };

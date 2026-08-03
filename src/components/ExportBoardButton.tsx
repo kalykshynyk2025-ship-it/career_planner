@@ -6,13 +6,14 @@ import {
   generateCriteriaBoardMarkdown,
   generateCompaniesBoardMarkdown,
   generateVacanciesBoardMarkdown,
+  generateVacancyAnalysisMarkdown,
   generateNewslettersBoardMarkdown,
   generateSwotBoardMarkdown,
   generateAgileTrackMarkdown,
   generateComprehensiveCareerMarkdown
 } from '../utils/exportMarkdown';
 
-export type BoardType = 'criteria' | 'companies' | 'vacancies' | 'newsletters' | 'swot' | 'agile_track' | 'all';
+export type BoardType = 'criteria' | 'companies' | 'vacancies' | 'vacancy_analysis' | 'newsletters' | 'swot' | 'agile_track' | 'all';
 
 interface ExportBoardButtonProps {
   state: CareerState;
@@ -65,6 +66,12 @@ export const ExportBoardButton: React.FC<ExportBoardButtonProps> = ({
           content: generateVacanciesBoardMarkdown(state),
           filename: `Board3_Vacancies_${dateStr}.md`,
           title: 'Доска №3: ATS Трекер вакансий'
+        };
+      case 'vacancy_analysis':
+        return {
+          content: generateVacancyAnalysisMarkdown(state),
+          filename: `Vacancy_Analysis_${dateStr}.md`,
+          title: 'Таблица «Анализ вакансий»'
         };
       case 'newsletters':
         return {

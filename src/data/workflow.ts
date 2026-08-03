@@ -164,6 +164,50 @@ export const INITIAL_CAREER_STATE: CareerState = {
       status: "Saved",
       link: "https://tbank.ru/career/vacancies/senior-react",
       notes: "Хорошие отзывы о процессах в команде"
+    },
+    {
+      id: "v4",
+      title: "Senior Frontend Engineer (E-commerce Core)",
+      company: "Ozon",
+      salaryRange: "310 000 - 410 000 ₽",
+      location: "Москва / Гибрид",
+      keySkills: ["React", "TypeScript", "GraphQL", "Module Federation", "Web Vitals"],
+      status: "Saved",
+      link: "https://job.ozon.ru/vacancies/senior-frontend",
+      notes: "Фокус на оптимизацию загрузки витрины товаров"
+    },
+    {
+      id: "v5",
+      title: "Senior Web Application Engineer (VK Video)",
+      company: "ВК (VK)",
+      salaryRange: "290 000 - 390 000 ₽",
+      location: "Санкт-Петербург / Remote",
+      keySkills: ["TypeScript", "WebSockets", "WebRTC", "VKUI", "Performance"],
+      status: "Applied",
+      link: "https://vk.company/ru/career/vacancies/video-web",
+      notes: "Интересный стек вокруг видео-стриминга и плеера"
+    },
+    {
+      id: "v6",
+      title: "Tech Lead Fullstack (Fintech UI & BFF)",
+      company: "Альфа-Банк",
+      salaryRange: "360 000 - 480 000 ₽",
+      location: "Москва / Удаленка",
+      keySkills: ["Node.js", "React", "BFF Architecture", "PostgreSQL", "Kafka"],
+      status: "Saved",
+      link: "https://alfabank.ru/about/careers/vacancies/tech-lead",
+      notes: "Руководство стримом разработки банковского фронтенда"
+    },
+    {
+      id: "v7",
+      title: "Senior Frontend Architect (Security Products)",
+      company: "Лаборатория Касперского",
+      salaryRange: "330 000 - 430 000 ₽",
+      location: "Москва / Гибрид",
+      keySkills: ["TypeScript", "React", "Architecture", "Security Standards", "SDK Design"],
+      status: "Saved",
+      link: "https://careers.kaspersky.ru/vacancies/frontend-architect",
+      notes: "Создание архитектурного фреймворка для внутренних дашбордов"
     }
   ],
   newsletters: [
@@ -189,55 +233,168 @@ export const INITIAL_CAREER_STATE: CareerState = {
     }
   ],
   vacancy_analyses: [
+    /* Вакансия 1: Авито */
     {
-      id: "va1",
-      vacancyTitle: "Senior Fullstack Engineer",
+      id: "va_avito_1",
+      vacancyTitle: "Senior Fullstack Engineer (React / Node.js)",
       company: "Авито",
-      item: "Уверенное владение React 18, TypeScript и Next.js",
+      item: "Уверенное владение React 18, TypeScript, Next.js и SSR",
       type: "Требование",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "4 года опыта на коммерческих проектах"
+      notes: "4+ года разработки на продуктовых React/TS проектах"
     },
     {
-      id: "va2",
-      vacancyTitle: "Senior Fullstack Engineer",
+      id: "va_avito_2",
+      vacancyTitle: "Senior Fullstack Engineer (React / Node.js)",
       company: "Авито",
       item: "Проектирование архитектуры микрофронтендов и System Design",
       type: "Требование",
       status: "Частично",
       achievementMethod: "Наставник",
-      notes: "Требуется подтянуть паттерны распределенного кэширования"
+      notes: "Проработка паттернов шардинга и с ментором по архитектуре"
     },
     {
-      id: "va3",
-      vacancyTitle: "Lead Frontend Engineer",
-      company: "Яндекс",
-      item: "Оптимизация Core Web Vitals и производительности сложных UI",
-      type: "Требование",
-      status: "Частично",
-      achievementMethod: "Обучение",
-      notes: "Изучить детально профилирование через Chrome Performance Profiler"
-    },
-    {
-      id: "va4",
-      vacancyTitle: "Senior React Developer",
-      company: "Т-Банк",
-      item: "Опыт проведения код-ревью и менторинга джуниор разработчиков",
+      id: "va_avito_3",
+      vacancyTitle: "Senior Fullstack Engineer (React / Node.js)",
+      company: "Авито",
+      item: "Проведение код-ревью, кросс-ревью архитектурных решений и митапов",
       type: "Обязанность",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Регулярно менторил 2 разработчиков в текущей компании"
+      notes: "Опыт проведения ревью на текущем месте работы"
+    },
+
+    /* Вакансия 2: Яндекс */
+    {
+      id: "va_yandex_1",
+      vacancyTitle: "Lead Frontend Engineer (Web Platform)",
+      company: "Яндекс",
+      item: "Оптимизация Core Web Vitals, профилирование производительности и память",
+      type: "Требование",
+      status: "Частично",
+      achievementMethod: "Обучение",
+      notes: "Пройти курс по углубленному браузерному перформансу Chrome DevTools"
     },
     {
-      id: "va5",
-      vacancyTitle: "Senior React Developer",
+      id: "va_yandex_2",
+      vacancyTitle: "Lead Frontend Engineer (Web Platform)",
+      company: "Яндекс",
+      item: "Развитие общекорпоративной дизайн-системы и UI-кита компонентов",
+      type: "Обязанность",
+      status: "Владею",
+      achievementMethod: "Уже владею",
+      notes: "Создавал библиотеку компонентов на Storybook и Tailwind"
+    },
+
+    /* Вакансия 3: Т-Банк */
+    {
+      id: "va_tbank_1",
+      vacancyTitle: "Senior React Developer (Core Banking UI)",
       company: "Т-Банк",
-      item: "Настройка сложных CI/CD пайплайнов и Docker-контейнеризация",
+      item: "Соблюдение правил безопасной веб-разработки OWASP Top 10",
       type: "Требование",
       status: "Не владею",
+      achievementMethod: "Обучение",
+      notes: "Пройти сертифицированный воркшоп по веб-безопасности и XSS/CSRF защите"
+    },
+    {
+      id: "va_tbank_2",
+      vacancyTitle: "Senior React Developer (Core Banking UI)",
+      company: "Т-Банк",
+      item: "Проектирование сложного состояния с асинхронными потоками (RxJS / Zustand)",
+      type: "Обязанность",
+      status: "Владею",
+      achievementMethod: "Уже владею",
+      notes: "Уверенный практический опыт с Zustand и Redux Toolkit"
+    },
+
+    /* Вакансия 4: Ozon */
+    {
+      id: "va_ozon_1",
+      vacancyTitle: "Senior Frontend Engineer (E-commerce Core)",
+      company: "Ozon",
+      item: "Опыт работы с GraphQL / REST API и сгенерированными типом клиентов",
+      type: "Требование",
+      status: "Владею",
+      achievementMethod: "Уже владею",
+      notes: "Интегрировал GraphQL Apollo Client на нескольких проектах"
+    },
+    {
+      id: "va_ozon_2",
+      vacancyTitle: "Senior Frontend Engineer (E-commerce Core)",
+      company: "Ozon",
+      item: "Настройка Module Federation (Webpack/Vite) для независимых релизов",
+      type: "Обязанность",
+      status: "Не владею",
       achievementMethod: "Фриланс-проект",
-      notes: "Сделать свой пет-проект с развертыванием в Yandex Cloud через GitHub Actions"
+      notes: "Сделать тестовый пет-проект с двумя микрофронтендами через Vite Module Federation"
+    },
+
+    /* Вакансия 5: ВК (VK) */
+    {
+      id: "va_vk_1",
+      vacancyTitle: "Senior Web Application Engineer (VK Video)",
+      company: "ВК (VK)",
+      item: "Разработка высоконагруженных веб-плееров, WebSockets и WebRTC соединения",
+      type: "Требование",
+      status: "Не владею",
+      achievementMethod: "Стажировка",
+      notes: "Принять участие в хакатоне или внутреннем пилоте по WebSockets & видео"
+    },
+    {
+      id: "va_vk_2",
+      vacancyTitle: "Senior Web Application Engineer (VK Video)",
+      company: "ВК (VK)",
+      item: "Кроссбраузерная и кроссплатформенная верстка с поддержкой Touch & TV",
+      type: "Обязанность",
+      status: "Частично",
+      achievementMethod: "Опыт на текущем месте",
+      notes: "Взять на текущей работе задачи по адаптации под планшеты и мобильные web"
+    },
+
+    /* Вакансия 6: Альфа-Банк */
+    {
+      id: "va_alfa_1",
+      vacancyTitle: "Tech Lead Fullstack (Fintech UI & BFF)",
+      company: "Альфа-Банк",
+      item: "Проектирование Node.js BFF (Backend For Frontend) сервисов и PostgreSQL",
+      type: "Требование",
+      status: "Частично",
+      achievementMethod: "Опыт на текущем месте",
+      notes: "Инициировать внедрение BFF слоя в текущем продуктовом спринте"
+    },
+    {
+      id: "va_alfa_2",
+      vacancyTitle: "Tech Lead Fullstack (Fintech UI & BFF)",
+      company: "Альфа-Банк",
+      item: "Управление продуктовой командой разработки от 5 человек, проведение 1:1",
+      type: "Обязанность",
+      status: "Частично",
+      achievementMethod: "Наставник",
+      notes: "Регулярные сессии с ментором-тимлидом по soft skills и менеджменту"
+    },
+
+    /* Вакансия 7: Лаборатория Касперского */
+    {
+      id: "va_kaspersky_1",
+      vacancyTitle: "Senior Frontend Architect (Security Products)",
+      company: "Лаборатория Касперского",
+      item: "Написание строго типизированных библиотек, плагинов и внешних SDK",
+      type: "Требование",
+      status: "Владею",
+      achievementMethod: "Уже владею",
+      notes: "Опубликовал несколько npm пакетов со строгими типов TypeScript"
+    },
+    {
+      id: "va_kaspersky_2",
+      vacancyTitle: "Senior Frontend Architect (Security Products)",
+      company: "Лаборатория Касперского",
+      item: "Внедрение автоматических статических анализаторов и контролей безопасности",
+      type: "Обязанность",
+      status: "Не владею",
+      achievementMethod: "Обучение",
+      notes: "Изучить интеграцию SonarQube и Snyk в CI/CD пайплайн"
     }
   ],
   swot_answers: {
