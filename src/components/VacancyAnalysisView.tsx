@@ -116,16 +116,20 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
       }
 
       if (v.notes) {
-        importedAnalyses.push({
-          id: `va_b3_note_${v.id}_${Date.now()}`,
-          vacancyTitle: v.title,
-          company: v.company,
-          item: `Обязанность: ${v.notes}`,
-          type: 'Обязанность',
-          status: 'Частично',
-          achievementMethod: 'Опыт на текущем месте',
-          notes: `Отработать на текущем месте или в пет-проекте за 2-3 недели`
-        });
+        const lowerNote = v.notes.toLowerCase();
+        const isSalaryOrMeta = lowerNote.includes('з/п') || lowerNote.includes('зарплат') || lowerNote.includes('специфика') || lowerNote.includes('примерная');
+        if (!isSalaryOrMeta) {
+          importedAnalyses.push({
+            id: `va_b3_note_${v.id}_${Date.now()}`,
+            vacancyTitle: v.title,
+            company: v.company,
+            item: `Обязанность: ${v.notes}`,
+            type: 'Обязанность',
+            status: 'Частично',
+            achievementMethod: 'Опыт на текущем месте',
+            notes: `Отработать на текущем месте или в пет-проекте за 2-3 недели`
+          });
+        }
       }
     });
 
@@ -217,6 +221,8 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
   const uniqueCompanies = Array.from(new Set(list.map(i => i.company))).filter(Boolean);
 
   const filteredList = list.filter(item => {
+    const lowerItem = (item.item || '').toLowerCase();
+    if (lowerItem.includes('з/п') || lowerItem.includes('зарплат') || (lowerItem.includes('специфика') && lowerItem.includes('примерная'))) return false;
     if (filterStatus !== 'all' && item.status !== filterStatus) return false;
     if (filterCompany !== 'all' && item.company !== filterCompany) return false;
     return true;
@@ -311,13 +317,6 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
             <strong>Прямое редактирование ячеек:</strong> Кликните по любому полю в таблице (компания, название, обязанность, план), чтобы изменить текст. Вы также можете быстро вставить готовый план кликом по шаблону!
           </span>
         </div>
-        <button
-          onClick={() => onAskAi("Помоги составить конкретный план освоения для моих гэпов из Анализа Вакансий с указанием курсов на Stepik, сроков и проектов")}
-          className="px-2.5 py-1 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[11px] font-semibold shrink-0 cursor-pointer flex items-center space-x-1"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>ИИ-План по гэпам</span>
-        </button>
       </div>
 
       {/* Metrics Bar */}
