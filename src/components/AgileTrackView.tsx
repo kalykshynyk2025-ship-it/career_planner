@@ -298,6 +298,10 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
         current_step: nextStep
       };
     });
+
+    if (stepNum === 8 && onOpenNotionExport) {
+      onOpenNotionExport();
+    }
   };
 
   const handleResetSteps = () => {
@@ -1010,10 +1014,19 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
               {/* Step 8: Final Report */}
               {currentStepNum === 8 && (
                 <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-2">
-                    <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs flex items-center space-x-1.5">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Все данные профиля и досок синхронизированы и готовы к экспорту:</span>
+                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-3">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center space-x-1.5">
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                        <span>Все данные профиля и досок синхронизированы и готовы к экспорту:</span>
+                      </div>
+                      <button
+                        onClick={onOpenNotionExport}
+                        className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center justify-center space-x-1.5 cursor-pointer shadow-xs transition-all shrink-0"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span>Открыть документ для экспорта</span>
+                      </button>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
                       <div className="p-2 bg-[var(--bg-card)] rounded border border-[var(--color-border)]">
@@ -1088,7 +1101,11 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
                 onClick={() => handleCompleteStep(currentStepNum)}
                 className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center space-x-1.5 cursor-pointer"
               >
-                <span>Подтвердить шаг #{currentStepNum} и далее</span>
+                <span>
+                  {currentStepNum === 8 
+                    ? 'Подтвердить шаг #8 и открыть документ для экспорта' 
+                    : `Подтвердить шаг #${currentStepNum} и далее`}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
