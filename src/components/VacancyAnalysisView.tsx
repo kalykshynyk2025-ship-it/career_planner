@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Plus, Trash2, Sparkles, CheckCircle2, AlertCircle, XCircle, Filter, Briefcase, Download, Copy, Check, GraduationCap, UserCheck, Building2, Rocket, Code2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Table, Plus, Trash2, CheckCircle2, AlertCircle, XCircle, Filter, Briefcase, Download, Copy, Check, GraduationCap, UserCheck, Building2, Rocket, Code2, Edit3, Sparkles } from 'lucide-react';
 import { CareerState, VacancyRequirementAnalysis } from '../types';
 import { ExportBoardButton } from './ExportBoardButton';
 
@@ -8,6 +8,14 @@ interface VacancyAnalysisViewProps {
   onChangeState: React.Dispatch<React.SetStateAction<CareerState>>;
   onAskAi: (prompt: string) => void;
 }
+
+const PLAN_PRESETS = [
+  'Пройти курс на Stepik за 2 недели, сделать проект по обработке 10 ГБ данных',
+  'Изучить документацию и паттерны (10 дней), покрыть ML-пайплайн тестами на pytest',
+  '3 менторские сессии с Senior DS за 2 недели: разбор архитектуры и подбора гипепараметров',
+  'Сделать пет-проект на GitHub (3 недели) с REST API на FastAPI, Docker и CI/CD',
+  'Отработать на текущем месте / стажировке за 3 недели'
+];
 
 export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
   state,
@@ -28,6 +36,30 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
   const [copiedTsv, setCopiedTsv] = useState(false);
 
   const list = state.vacancy_analyses || [];
+
+  const handleRowChange = <K extends keyof VacancyRequirementAnalysis>(
+    id: string,
+    field: K,
+    value: VacancyRequirementAnalysis[K]
+  ) => {
+    onChangeState(prev => ({
+      ...prev,
+      vacancy_analyses: (prev.vacancy_analyses || []).map(item => {
+        if (item.id === id) {
+          const updated = { ...item, [field]: value };
+          if (field === 'status') {
+            if (value === 'Владею') {
+              updated.achievementMethod = 'Уже владею';
+            } else if (item.achievementMethod === 'Уже владею') {
+              updated.achievementMethod = 'Обучение';
+            }
+          }
+          return updated;
+        }
+        return item;
+      })
+    }));
+  };
 
   const handleClearAll = () => {
     if (window.confirm('Вы уверены, что хотите очистить все вакансии и требования из таблицы анализа?')) {
@@ -50,28 +82,35 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
     vacancies.forEach((v) => {
       if (v.parsedRequirements && v.parsedRequirements.length > 0) {
         v.parsedRequirements.forEach((req, idx) => {
+          const isDuty = idx % 2 === 1 || req.toLowerCase().includes('разраб') || req.toLowerCase().includes('провед') || req.toLowerCase().includes('настрой');
           importedAnalyses.push({
             id: `va_b3_pr_${v.id}_${idx}_${Date.now()}`,
             vacancyTitle: v.title,
             company: v.company,
             item: req,
-            type: idx % 2 === 0 ? 'Требование' : 'Обязанность',
-            status: 'Частично',
-            achievementMethod: 'Обучение',
-            notes: `Импортировано с Доски №3: Вакансии (${v.company})`
+            type: isDuty ? 'Обязанность' : 'Требование',
+            status: idx === 0 ? 'Владею' : (idx % 2 === 0 ? 'Частично' : 'Не владею'),
+            achievementMethod: idx === 0 ? 'Уже владею' : 'Обучение',
+            notes: idx === 0
+              ? 'Навык/обязанность освоена на практике'
+              : `Пройти специализированный курс по ${req.slice(0, 35)}... за 2 недели`
           });
         });
-      } else if (v.keySkills && v.keySkills.length > 0) {
+      }
+
+      if (v.keySkills && v.keySkills.length > 0) {
         v.keySkills.forEach((skill, idx) => {
           importedAnalyses.push({
             id: `va_b3_ks_${v.id}_${idx}_${Date.now()}`,
             vacancyTitle: v.title,
             company: v.company,
-            item: `Ключевой навык/стек: ${skill}`,
+            item: `Требование к стеку: ${skill}`,
             type: 'Требование',
-            status: idx % 2 === 0 ? 'Владею' : 'Частично',
-            achievementMethod: idx % 2 === 0 ? 'Уже владею' : 'Обучение',
-            notes: `Стек из Доски №3: Вакансии (${v.company})`
+            status: idx % 3 === 0 ? 'Владею' : (idx % 3 === 1 ? 'Частично' : 'Не владею'),
+            achievementMethod: idx % 3 === 0 ? 'Уже владею' : 'Обучение',
+            notes: idx % 3 === 0
+              ? 'Стек регулярно используется в проектах'
+              : `Пройти курс по ${skill} на Stepik/Coursera за 2 недели, сделать пет-проект`
           });
         });
       }
@@ -81,11 +120,11 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
           id: `va_b3_note_${v.id}_${Date.now()}`,
           vacancyTitle: v.title,
           company: v.company,
-          item: `Специфика / Задачи: ${v.notes}`,
+          item: `Обязанность: ${v.notes}`,
           type: 'Обязанность',
           status: 'Частично',
           achievementMethod: 'Опыт на текущем месте',
-          notes: `Из Доски №3: Вакансии (${v.company})`
+          notes: `Отработать на текущем месте или в пет-проекте за 2-3 недели`
         });
       }
     });
@@ -155,7 +194,7 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
       type,
       status,
       achievementMethod: status === 'Владею' ? 'Уже владею' : method,
-      notes: notes.trim()
+      notes: notes.trim() || 'Пройти курс на Stepik за 2 недели, сделать проект'
     };
 
     onChangeState(prev => ({
@@ -175,28 +214,6 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
     }));
   };
 
-  const handleStatusChange = (id: string, newStatus: VacancyRequirementAnalysis['status']) => {
-    onChangeState(prev => ({
-      ...prev,
-      vacancy_analyses: (prev.vacancy_analyses || []).map(item => {
-        if (item.id === id) {
-          const newMethod = newStatus === 'Владею' ? 'Уже владею' : (item.achievementMethod === 'Уже владею' ? 'Обучение' : item.achievementMethod);
-          return { ...item, status: newStatus, achievementMethod: newMethod };
-        }
-        return item;
-      })
-    }));
-  };
-
-  const handleMethodChange = (id: string, newMethod: VacancyRequirementAnalysis['achievementMethod']) => {
-    onChangeState(prev => ({
-      ...prev,
-      vacancy_analyses: (prev.vacancy_analyses || []).map(item => 
-        item.id === id ? { ...item, achievementMethod: newMethod } : item
-      )
-    }));
-  };
-
   const uniqueCompanies = Array.from(new Set(list.map(i => i.company))).filter(Boolean);
 
   const filteredList = list.filter(item => {
@@ -209,24 +226,6 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
   const partialCount = list.filter(i => i.status === 'Частично').length;
   const missingCount = list.filter(i => i.status === 'Не владею').length;
 
-  const getMethodBadge = (m: VacancyRequirementAnalysis['achievementMethod']) => {
-    switch (m) {
-      case 'Обучение':
-        return <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"><GraduationCap className="w-3 h-3 mr-0.5" />Обучение</span>;
-      case 'Наставник':
-        return <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"><UserCheck className="w-3 h-3 mr-0.5" />Наставник</span>;
-      case 'Опыт на текущем месте':
-        return <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"><Building2 className="w-3 h-3 mr-0.5" />Опыт на работе</span>;
-      case 'Стажировка':
-        return <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"><Rocket className="w-3 h-3 mr-0.5" />Стажировка</span>;
-      case 'Фриланс-проект':
-        return <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20"><Code2 className="w-3 h-3 mr-0.5" />Фриланс / Пет</span>;
-      case 'Уже владею':
-      default:
-        return <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20"><CheckCircle2 className="w-3 h-3 mr-0.5" />Уже владею</span>;
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -238,14 +237,14 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Таблица «Анализ вакансий»
+                Интерактивный «Анализ вакансий»
               </h1>
               <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                7+ Вакансий
+                Полное редактирование
               </span>
             </div>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5">
-              Системный разбор требований и обязанностей из 7 желаемых вакансий, проверка владения и способы достижения гэпов.
+              В этой таблице вы можете редактировать каждую ячейку (компанию, вакансию, тип, обязанности, требования, статус владения и конкретный план освоения).
             </p>
           </div>
         </div>
@@ -279,10 +278,10 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
           <button
             onClick={handleImportFromBoard3}
             className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-xs font-semibold hover:opacity-90 flex items-center space-x-1.5 transition-all cursor-pointer shadow-xs"
-            title="Импортировать вакансии и требования из Доски №3: Вакансии"
+            title="Импортировать вакансии, обязанности и стек с Доски №3"
           >
             <Briefcase className="w-4 h-4" />
-            <span>Добавить с Доски №3: Вакансии</span>
+            <span>Импорт с Доски №3</span>
           </button>
 
           <button
@@ -299,9 +298,26 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
             className="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-all cursor-pointer shadow-xs"
           >
             <Plus className="w-4 h-4" />
-            <span>Добавить</span>
+            <span>Добавить пункт</span>
           </button>
         </div>
+      </div>
+
+      {/* Helper Banner */}
+      <div className="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-700 dark:text-blue-300 flex items-center justify-between gap-3">
+        <div className="flex items-center space-x-2">
+          <Edit3 className="w-4 h-4 text-blue-500 shrink-0" />
+          <span>
+            <strong>Прямое редактирование ячеек:</strong> Кликните по любому полю в таблице (компания, название, обязанность, план), чтобы изменить текст. Вы также можете быстро вставить готовый план кликом по шаблону!
+          </span>
+        </div>
+        <button
+          onClick={() => onAskAi("Помоги составить конкретный план освоения для моих гэпов из Анализа Вакансий с указанием курсов на Stepik, сроков и проектов")}
+          className="px-2.5 py-1 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[11px] font-semibold shrink-0 cursor-pointer flex items-center space-x-1"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>ИИ-План по гэпам</span>
+        </button>
       </div>
 
       {/* Metrics Bar */}
@@ -310,7 +326,7 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
           <div>
             <div className="text-xs text-[var(--text-secondary)]">Проанализировано пунктов</div>
             <div className="text-xl font-bold text-[var(--text-primary)] mt-1">{list.length}</div>
-            <div className="text-[10px] text-blue-500 font-medium mt-0.5">7 желаемых вакансий</div>
+            <div className="text-[10px] text-blue-500 font-medium mt-0.5">Требования & Обязанности</div>
           </div>
           <Table className="w-5 h-5 text-gray-400" />
         </div>
@@ -339,7 +355,7 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
           <div>
             <div className="text-xs text-[var(--text-secondary)]">Не владею (Гэпы)</div>
             <div className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1">{missingCount}</div>
-            <div className="text-[10px] text-rose-500 font-medium mt-0.5">План закрытия задан</div>
+            <div className="text-[10px] text-rose-500 font-medium mt-0.5">Задан конкретный план</div>
           </div>
           <XCircle className="w-5 h-5 text-rose-500" />
         </div>
@@ -351,7 +367,7 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-[var(--color-border)]">
             <h3 className="font-bold text-sm text-[var(--text-primary)] flex items-center space-x-2">
               <Plus className="w-4 h-4 text-emerald-500" />
-              <span>Выписать требование или обязанность из вакансии</span>
+              <span>Выписать новое требование или обязанность из вакансии</span>
             </h3>
 
             {state.selected_vacancies && state.selected_vacancies.length > 0 && (
@@ -423,7 +439,7 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
               type="text"
               value={itemText}
               onChange={e => setItemText(e.target.value)}
-              placeholder="Например: Проектирование микрофронтендов, опыт работы с WebSockets, участие в архитектурных комитетах..."
+              placeholder="Например: Разрабатывать ML-пайплайны, проводить A/B тесты, знания PySpark..."
               className="w-full px-3 py-2 text-xs rounded-xl bg-[var(--bg-main)] border border-[var(--color-border)]"
               required
             />
@@ -444,7 +460,7 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Как ты сможешь его достичь (Способ достижения)</label>
+              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Способ достижения</label>
               <select
                 value={status === 'Владею' ? 'Уже владею' : method}
                 disabled={status === 'Владею'}
@@ -462,12 +478,12 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">План действий / Подробные заметки</label>
+            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Конкретный план освоения (Курс, сроки, проект)</label>
             <input
               type="text"
               value={notes}
               onChange={e => setNotes(e.target.value)}
-              placeholder="Детали: курс по архитектуре, менторские сессии, пет-проект..."
+              placeholder="Например: Пройти курс по PySpark на Stepik за 2 недели, сделать проект по обработке 10 ГБ данных"
               className="w-full px-3 py-2 text-xs rounded-xl bg-[var(--bg-main)] border border-[var(--color-border)]"
             />
           </div>
@@ -534,47 +550,75 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
         )}
       </div>
 
-      {/* Main Table */}
+      {/* Editable Table */}
       <div className="bg-[var(--bg-card)] border border-[var(--color-border)] rounded-2xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-[var(--color-border)] bg-[var(--bg-main)] text-[var(--text-secondary)] font-bold uppercase text-[10px] tracking-wider">
-                <th className="p-4">Компания & Вакансия</th>
-                <th className="p-4">Требование / Обязанность из вакансии</th>
-                <th className="p-4">Тип</th>
-                <th className="p-4">Статус владения</th>
-                <th className="p-4">Способ достижения</th>
-                <th className="p-4">Заметки / План достижения</th>
-                <th className="p-4 text-right">Управление</th>
+                <th className="p-3.5 min-w-[160px]">Компания & Вакансия</th>
+                <th className="p-3.5 min-w-[220px]">Требование / Обязанность</th>
+                <th className="p-3.5 min-w-[110px]">Тип</th>
+                <th className="p-3.5 min-w-[130px]">Статус владения</th>
+                <th className="p-3.5 min-w-[150px]">Способ достижения</th>
+                <th className="p-3.5 min-w-[280px]">Конкретный план освоения (Сроки / Курс / Проект)</th>
+                <th className="p-3.5 text-right min-w-[60px]">Удалить</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)]">
               {filteredList.map((row) => (
-                <tr key={row.id} className="hover:bg-blue-500/5 transition-colors">
-                  <td className="p-4 min-w-[160px]">
-                    <div className="font-bold text-[var(--text-primary)] flex items-center space-x-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                      <span>{row.company}</span>
-                    </div>
-                    <div className="text-[11px] text-[var(--text-secondary)] mt-0.5 font-medium">{row.vacancyTitle}</div>
+                <tr key={row.id} className="hover:bg-blue-500/5 transition-colors align-top">
+                  {/* Company & Title */}
+                  <td className="p-3 space-y-1">
+                    <input
+                      type="text"
+                      value={row.company || ''}
+                      onChange={e => handleRowChange(row.id, 'company', e.target.value)}
+                      placeholder="Компания"
+                      className="w-full font-bold text-xs text-[var(--text-primary)] bg-transparent hover:bg-[var(--bg-main)] focus:bg-[var(--bg-main)] focus:ring-1 focus:ring-blue-500 px-1.5 py-0.5 rounded transition-all border border-transparent hover:border-[var(--color-border)]"
+                    />
+                    <input
+                      type="text"
+                      value={row.vacancyTitle || ''}
+                      onChange={e => handleRowChange(row.id, 'vacancyTitle', e.target.value)}
+                      placeholder="Название вакансии"
+                      className="w-full text-[11px] text-[var(--text-secondary)] bg-transparent hover:bg-[var(--bg-main)] focus:bg-[var(--bg-main)] focus:ring-1 focus:ring-blue-500 px-1.5 py-0.5 rounded transition-all border border-transparent hover:border-[var(--color-border)]"
+                    />
                   </td>
 
-                  <td className="p-4 max-w-sm font-medium text-[var(--text-primary)] leading-relaxed">
-                    {row.item}
+                  {/* Item (Text requirement / duty) */}
+                  <td className="p-3">
+                    <textarea
+                      rows={2}
+                      value={row.item || ''}
+                      onChange={e => handleRowChange(row.id, 'item', e.target.value)}
+                      placeholder="Обязанность или требование..."
+                      className="w-full text-xs font-medium text-[var(--text-primary)] leading-relaxed bg-transparent hover:bg-[var(--bg-main)] focus:bg-[var(--bg-main)] focus:ring-1 focus:ring-blue-500 p-1.5 rounded transition-all border border-transparent hover:border-[var(--color-border)] resize-y"
+                    />
                   </td>
 
-                  <td className="p-4 shrink-0">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${row.type === 'Обязанность' ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20' : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'}`}>
-                      {row.type || 'Требование'}
-                    </span>
+                  {/* Type */}
+                  <td className="p-3">
+                    <select
+                      value={row.type || 'Требование'}
+                      onChange={e => handleRowChange(row.id, 'type', e.target.value as VacancyRequirementAnalysis['type'])}
+                      className={`w-full px-2 py-1 text-[11px] font-bold rounded-lg border cursor-pointer ${
+                        row.type === 'Обязанность'
+                          ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30'
+                          : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                      }`}
+                    >
+                      <option value="Требование">Требование</option>
+                      <option value="Обязанность">Обязанность</option>
+                    </select>
                   </td>
 
-                  <td className="p-4">
+                  {/* Status */}
+                  <td className="p-3">
                     <select
                       value={row.status}
-                      onChange={e => handleStatusChange(row.id, e.target.value as VacancyRequirementAnalysis['status'])}
-                      className={`px-2.5 py-1 text-xs font-bold rounded-xl border border-[var(--color-border)] cursor-pointer ${
+                      onChange={e => handleRowChange(row.id, 'status', e.target.value as VacancyRequirementAnalysis['status'])}
+                      className={`w-full px-2 py-1 text-[11px] font-bold rounded-lg border cursor-pointer ${
                         row.status === 'Владею' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' :
                         row.status === 'Частично' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' :
                         'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
@@ -586,29 +630,51 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
                     </select>
                   </td>
 
-                  <td className="p-4">
-                    <div className="space-y-1">
-                      <div>{getMethodBadge(row.achievementMethod)}</div>
-                      <select
-                        value={row.achievementMethod}
-                        onChange={e => handleMethodChange(row.id, e.target.value as VacancyRequirementAnalysis['achievementMethod'])}
-                        className="mt-1 px-2 py-1 text-[11px] rounded-lg bg-[var(--bg-main)] border border-[var(--color-border)] font-medium text-[var(--text-primary)] cursor-pointer"
-                      >
-                        <option value="Уже владею">Уже владею</option>
-                        <option value="Обучение">Обучение / Курсы</option>
-                        <option value="Наставник">Наставник / Ментор</option>
-                        <option value="Опыт на текущем месте">Опыт на текущем месте</option>
-                        <option value="Стажировка">Стажировка / Хакатон</option>
-                        <option value="Фриланс-проект">Фриланс / Пет-проект</option>
-                      </select>
+                  {/* Achievement Method */}
+                  <td className="p-3">
+                    <select
+                      value={row.achievementMethod}
+                      onChange={e => handleRowChange(row.id, 'achievementMethod', e.target.value as VacancyRequirementAnalysis['achievementMethod'])}
+                      className="w-full px-2 py-1 text-[11px] rounded-lg bg-[var(--bg-main)] border border-[var(--color-border)] font-medium text-[var(--text-primary)] cursor-pointer"
+                    >
+                      <option value="Уже владею">Уже владею</option>
+                      <option value="Обучение">Обучение / Курсы</option>
+                      <option value="Наставник">Наставник / Ментор</option>
+                      <option value="Опыт на текущем месте">Опыт на текущем месте</option>
+                      <option value="Стажировка">Стажировка / Хакатон</option>
+                      <option value="Фриланс-проект">Фриланс / Пет-проект</option>
+                    </select>
+                  </td>
+
+                  {/* Notes / Plan (Interactive Textarea + Quick Presets) */}
+                  <td className="p-3 space-y-1.5">
+                    <textarea
+                      rows={2}
+                      value={row.notes || ''}
+                      onChange={e => handleRowChange(row.id, 'notes', e.target.value)}
+                      placeholder="Например: Пройти курс по PySpark на Stepik за 2 недели, сделать проект по обработке 10 ГБ данных"
+                      className="w-full text-xs text-[var(--text-primary)] bg-[var(--bg-main)] hover:bg-[var(--bg-main)]/80 focus:bg-[var(--bg-main)] focus:ring-1 focus:ring-blue-500 p-2 rounded-xl border border-[var(--color-border)] leading-relaxed resize-y"
+                    />
+                    
+                    {/* Quick Template Picker */}
+                    <div className="flex items-center gap-1 overflow-x-auto pb-1">
+                      <span className="text-[10px] text-[var(--text-secondary)] font-medium shrink-0">Вставить:</span>
+                      {PLAN_PRESETS.slice(0, 3).map((preset, pIdx) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => handleRowChange(row.id, 'notes', preset)}
+                          className="px-1.5 py-0.5 text-[9px] bg-[var(--bg-main)] hover:bg-blue-500/10 hover:text-blue-600 border border-[var(--color-border)] rounded text-[var(--text-secondary)] truncate max-w-[120px] shrink-0 cursor-pointer"
+                          title={preset}
+                        >
+                          +{preset.slice(0, 18)}...
+                        </button>
+                      ))}
                     </div>
                   </td>
 
-                  <td className="p-4 text-[11px] text-[var(--text-secondary)] max-w-xs">
-                    {row.notes || '—'}
-                  </td>
-
-                  <td className="p-4 text-right">
+                  {/* Actions */}
+                  <td className="p-3 text-right">
                     <button
                       onClick={() => handleDelete(row.id)}
                       className="p-1.5 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
@@ -623,7 +689,7 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
               {filteredList.length === 0 && (
                 <tr>
                   <td colSpan={7} className="p-8 text-center text-xs text-[var(--text-secondary)]">
-                    Записи по выбранным фильтрам не найдены. Нажмите «Добавить с Доски №3: Вакансии» или «Добавить».
+                    Записи по выбранным фильтрам не найдены. Нажмите «Импорт с Доски №3» или «Добавить пункт».
                   </td>
                 </tr>
               )}
@@ -634,3 +700,4 @@ export const VacancyAnalysisView: React.FC<VacancyAnalysisViewProps> = ({
     </div>
   );
 };
+

@@ -242,7 +242,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Базовый стек обработки данных и классических ML-моделей освоен на практике"
+      notes: "Базовый стек обработан на 100%. Выполнен проект по EDA и предсказанию оттока пользователей."
     },
     {
       id: "va_tbank_2",
@@ -252,17 +252,17 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Практический опыт с SQL-запросами на пет-проектах и учебных курсах"
+      notes: "Решено 45 задач уровня Medium/Hard на LeetCode SQL & sql-ex.ru."
     },
     {
       id: "va_tbank_3",
       vacancyTitle: "Intern Machine Learning Engineer (Risk & Credit ML)",
       company: "Т-Банк",
-      item: "Знание основ высшей математики, теории вероятностей и математической статистики",
+      item: "Знание основы высшей математики, теории вероятностей и математической статистики",
       type: "Требование",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Фундаментальная университетская база мат. анализа, линала и мат. статистики"
+      notes: "Фундаментальный бакалавриат по прикладной математике, проработка конспектов ШАД."
     },
     {
       id: "va_tbank_4",
@@ -272,7 +272,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Частично",
       achievementMethod: "Наставник",
-      notes: "Проработка нюансов валидации и подбора гиперпараметров с ментором по DS"
+      notes: "Пройти 3 менторские сессии с Senior DS за 2 недели; построить кредитный скоринг на датасете Home Credit (Kaggle) с фильтрацией лика признаков."
     },
     {
       id: "va_tbank_5",
@@ -282,7 +282,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Частично",
       achievementMethod: "Обучение",
-      notes: "Изучить паттерны тестирования датасетов и ML-пайплайнов на pytest"
+      notes: "Пройти курс 'Тестирование ML-пайплайнов на pytest' за 10 дней, покрыть тестами препроцессинг данных и инференс скоринга."
     },
 
     /* Вакансия 2: Яндекс — Junior Data Scientist */
@@ -294,7 +294,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Частично",
       achievementMethod: "Обучение",
-      notes: "Прохождение углубленного практического курса по PyTorch и Hugging Face"
+      notes: "Пройти практический курс 'Deep Learning & PyTorch' на Stepik за 3 недели, выложить на GitHub модель классификации текстов."
     },
     {
       id: "va_yandex_2",
@@ -304,7 +304,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Не владею",
       achievementMethod: "Обучение",
-      notes: "Разбор архитектуры Transformer и практическая донастройка LLM на HuggingFace"
+      notes: "Пройти курс 'HuggingFace NLP & LLM Fine-Tuning' за 2.5 недели, дообучить Qwen 2.5 7B с помощью LoRA/PEFT под задачу классификации выписок."
     },
     {
       id: "va_yandex_3",
@@ -314,7 +314,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Опыт очистки, лемматизации и токенизации русскоязычных текстов на Python"
+      notes: "Готовый пайплайн очистки, лемматизации (Natasha/pymorphy3) и BPE-токенизации 5 ГБ текстов."
     },
     {
       id: "va_yandex_4",
@@ -324,7 +324,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Не владею",
       achievementMethod: "Наставник",
-      notes: "Разбор метрик ранжирования поисковых моделей с ментором из Яндекса"
+      notes: "Изучить раздел 'Learning to Rank' в ШАД за 10 дней, наботать скрипт вычисления NDCG@10 и MRR с ментором из Яндекса."
     },
 
     /* Вакансия 3: Ozon — Junior ML Engineer */
@@ -336,7 +336,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Не владею",
       achievementMethod: "Фриланс-проект",
-      notes: "Создание пет-проекта рекомендательного сервиса на алгоритмах фильтрации"
+      notes: "Пройти специализацию 'Recommender Systems' за 3 недели, сделать пет-проект рекомендатора e-commerce товаров (Two-Tower PyTorch model) на GitHub."
     },
     {
       id: "va_ozon_2",
@@ -346,7 +346,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Уверенный практический опыт подбора признаков и гипепараметров в CatBoost"
+      notes: "Опыт подбора гипепараметров в CatBoost через Optuna, кастомные лосс-функции."
     },
     {
       id: "va_ozon_3",
@@ -356,7 +356,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Частично",
       achievementMethod: "Обучение",
-      notes: "Изучение методологии A/B тестов, расчета размерности выборки и p-value"
+      notes: "Пройти курс 'А/Б-тестирование в аналитике' от Strataplan за 2 недели, отработать расчёт p-value, мощности и бутстрап на Python."
     },
     {
       id: "va_ozon_4",
@@ -366,7 +366,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Деплой сервисов с инференсом ML-моделей в Docker контейнерах"
+      notes: "Развернут асинхронный FastAPI микросервис с Docker-compose и валидацией Pydantic."
     },
 
     /* Вакансия 4: Авито — Intern ML Engineer */
@@ -378,7 +378,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Частично",
       achievementMethod: "Обучение",
-      notes: "Курс по базовым алгоритмам компьютерного зрения и обработке изображений"
+      notes: "Пройти курс 'Computer Vision на PyTorch' за 2 недели, изучить методы предобработки и фильтрации изображений."
     },
     {
       id: "va_avito_2",
@@ -388,7 +388,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Не владею",
       achievementMethod: "Стажировка",
-      notes: "Закрепление практических навыков детекции и классификации на стажировке"
+      notes: "Освоить Ultralytics YOLOv8 за 10 дней, обучить модель детекции дефектов на 1000 изображений из объявления."
     },
     {
       id: "va_avito_3",
@@ -398,7 +398,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Опыт аугментации данных с помощью Albumentation и подготовки выборок"
+      notes: "Опыт работы с библиотекой Albumentations (Cutout, RandomCrop, Rotation) для подготовки train/val выборок."
     },
 
     /* Вакансия 5: Сбер — Junior Data Scientist */
@@ -410,7 +410,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Частично",
       achievementMethod: "Фриланс-проект",
-      notes: "Внедрение MLflow в трекинг параметров моделей собственного пет-проекта"
+      notes: "За 1 неделю интегрировать MLflow Tracking и Model Registry в 2 существующих пет-проекта."
     },
     {
       id: "va_sber_2",
@@ -420,7 +420,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Не владею",
       achievementMethod: "Опыт на текущем месте",
-      notes: "Изучение концепции Feature Store и витрин данных на текущих проектах"
+      notes: "Изучить архитектуру Feast Feature Store за 2 недели, спроектировать прототип витрины фичей клиентского поведения."
     },
     {
       id: "va_sber_3",
@@ -430,7 +430,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Не владею",
       achievementMethod: "Обучение",
-      notes: "Прохождение курса по дата-инженерии и написанию DAG в Airflow"
+      notes: "Пройти курс 'Apache Airflow для ML & Data Engineering' на Stepik за 2 недели, написать 3 регулярных DAG с PythonOperator."
     },
 
     /* Вакансия 6: ВК (VK) — Intern ML / Deep Learning Developer */
@@ -442,7 +442,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Написание асинхронных микросервисов на FastAPI / Python"
+      notes: "Создание высоконагруженных эндпоинтов на asyncio и aiohttp."
     },
     {
       id: "va_vk_2",
@@ -452,7 +452,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Не владею",
       achievementMethod: "Стажировка",
-      notes: "Изучение методов извлечения звуковых фичей (Mel-spectrograms) на стажировке"
+      notes: "Изучить Librosa & torchaudio за 2 недели, сделать экстрактор спектрограмм и эмбеддингов (Mel-Spectrogram)."
     },
     {
       id: "va_vk_3",
@@ -462,7 +462,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Не владею",
       achievementMethod: "Наставник",
-      notes: "Отработка конвертации PyTorch моделей в ONNX c наставником"
+      notes: "Пройти туториал ONNX Runtime за 10 дней с ментором, снизить латентность PyTorch модели инференса в 3 раза."
     },
 
     /* Вакансия 7: Лаборатория Касперского — Junior AI Research Engineer */
@@ -474,7 +474,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Владею",
       achievementMethod: "Уже владею",
-      notes: "Системная работа в Linux, виртуализация в Docker и версионирование в Git"
+      notes: "Ежедневная работа в Ubuntu Linux, Docker-контейнерах и ветках Git."
     },
     {
       id: "va_kaspersky_2",
@@ -484,7 +484,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Требование",
       status: "Частично",
       achievementMethod: "Обучение",
-      notes: "Курс по поску аномалий и обучение автоэнкодеров в PyTorch"
+      notes: "Пройти курс по 'Anomaly Detection & Deep Learning' за 2 недели, реализовать Autoencoder на PyTorch для поиска аномалий в данных."
     },
     {
       id: "va_kaspersky_3",
@@ -494,7 +494,7 @@ export const INITIAL_CAREER_STATE: CareerState = {
       type: "Обязанность",
       status: "Частично",
       achievementMethod: "Опыт на текущем месте",
-      notes: "Разбор реальных логов кибер-угроз на алгоритмах классического машинного обучения"
+      notes: "Написать парсер логов Nginx/Syslog за 1 неделю, обучить IsolationForest для детекции DDoS-атак."
     }
   ],
   swot_answers: {
