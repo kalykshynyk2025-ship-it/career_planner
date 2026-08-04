@@ -88,23 +88,27 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
   const [showAllStepsGuide, setShowAllStepsGuide] = useState(true);
   const currentStepNum = state.current_step;
 
-  // Live data counts from user filled boards
+  // Live data counts from user filled boards and profile
   const criteria = state.notion_criteria || [];
   const companies = state.selected_companies || [];
   const vacancies = state.selected_vacancies || [];
   const newsletters = state.newsletters || [];
   const analyses = state.vacancy_analyses || [];
   const swotCount = (state.swot?.strengths?.length || 0) + (state.swot?.weaknesses?.length || 0) + (state.swot?.opportunities?.length || 0) + (state.swot?.threats?.length || 0);
+  const goals = state.goals || {};
+  const market = state.selected_market || '';
+  const position = state.selected_position || '';
+  const skills = state.skills || [];
 
   const stepsList = [
-    { num: 1, title: 'Карьерное направление & Рынок', desc: 'Рынок (РФ/Зарубежный), формат (удаленка/офис), фаза (стартап/корпорация)' },
-    { num: 2, title: 'Анализ должностей', desc: 'Сравнение и выбор основной и запасной вакансии' },
+    { num: 1, title: 'Карьерное направление & Рынок', desc: `${state.selected_market || 'РФ / Global'} • ${state.goals?.targetGrade || 'Senior ML'} • ${state.goals?.expectedSalary || '380-550k ₽'}` },
+    { num: 2, title: 'Анализ должностей', desc: `Роль: ${state.selected_position || 'Senior ML & DS Engineer'} (${state.skills?.length || 0} навыков в матрице)` },
     { num: 3, title: 'Доска №1: Критерии выбора', desc: `Чек-лист из ${criteria.length} критических условий компании` },
     { num: 4, title: 'Маппинг целевых компаний', desc: `${companies.length} выбранных компаний в таргетированном списке` },
     { num: 5, title: 'Анализ актуальных вакансий', desc: `${vacancies.length} отслеживаемых вакансий в ATS трекере` },
     { num: 6, title: 'Подписка на карьерные рассылки', desc: `${newsletters.length} каналов и подписок настроено` },
-    { num: 7, title: 'SWOT-анализ профиля', desc: `Оценка сильных и слабых сторон (${swotCount} факторов)` },
-    { num: 8, title: 'Финальный карьерный отчет', desc: 'Консолидированный документ и готовность к откликам' }
+    { num: 7, title: 'SWOT-анализ профиля', desc: `Оценка сильных и слабых сторон (${swotCount} факторов SWOT, ${analyses.length} требований)` },
+    { num: 8, title: 'Финальный карьерный отчет', desc: `Консолидация всех ${criteria.length + companies.length + vacancies.length + newsletters.length + analyses.length} элементов из заполненных досок` }
   ];
 
   const handleCompleteStep = (stepNum: number) => {
@@ -300,60 +304,281 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
               {currentStepObj.desc}
             </p>
 
-            {/* Live Data Excerpt from filled boards for this step */}
+            {/* Live Data Excerpt from filled boards and profile for this step */}
             <div className="p-4 rounded-xl bg-[var(--bg-main)] border border-[var(--color-border)] space-y-3 text-xs">
               <h4 className="font-bold text-[var(--text-primary)] flex items-center space-x-2">
                 <ListFilter className="w-4 h-4 text-blue-500" />
-                <span>Текущие данные из ваших досок для этапа #{currentStepObj.num}:</span>
+                <span>Информация из вашего профиля и заполненных досок для этапа #{currentStepObj.num}:</span>
               </h4>
 
+              {/* Step 1: Profile & Market */}
+              {currentStepNum === 1 && (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold">Главная карьерная цель</span>
+                      <span className="font-bold text-[var(--text-primary)]">{goals.primaryGoal || 'Не заполнено'}</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold">Целевой рынок</span>
+                      <span className="font-bold text-[var(--text-primary)]">{market || 'РФ / Global Remote'}</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold">Целевой грейд</span>
+                      <span className="font-bold text-[var(--text-primary)]">{goals.targetGrade || 'Senior ML / AI Architect'}</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold">Ожидаемая вилка</span>
+                      <span className="font-bold text-[var(--text-primary)]">{goals.expectedSalary || '380 000 - 550 000 ₽'}</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold">Формат & Локация</span>
+                      <span className="font-bold text-[var(--text-primary)]">{goals.targetLocation || 'Удаленка / Гибрид'}</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold">Сроки поиска (Timeline)</span>
+                      <span className="font-bold text-[var(--text-primary)]">{goals.timeline || '3-6 месяцев'}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Position & Skills Matrix */}
+              {currentStepNum === 2 && (
+                <div className="space-y-2">
+                  <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                    <span className="text-[var(--text-secondary)] block text-[10px] font-semibold">Основное позиционирование (Role)</span>
+                    <span className="font-bold text-sm text-[var(--text-primary)]">{position || 'Senior ML & DS Engineer / AI Architect'}</span>
+                  </div>
+                  {goals.hardSkillsSummary && (
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold mb-1">Хард-скиллы из профиля</span>
+                      <div className="flex flex-wrap gap-1">
+                        {goals.hardSkillsSummary.split(',').map((s, idx) => (
+                          <span key={idx} className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-semibold">
+                            {s.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {skills.length > 0 && (
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)]">
+                      <span className="text-[var(--text-secondary)] block text-[10px] font-semibold mb-1">Навыки из Матрицы навыков ({skills.length})</span>
+                      <div className="flex flex-wrap gap-1 max-h-32 overflow-y-auto">
+                        {skills.map(sk => (
+                          <span key={sk.id} className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">
+                            {sk.name} ({sk.level})
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Step 3: Criteria */}
               {currentStepNum === 3 && (
-                <div className="space-y-1">
-                  <div className="text-[11px] text-[var(--text-secondary)] font-medium">Критерии выбора ({criteria.length}):</div>
-                  <div className="flex flex-wrap gap-1">
-                    {criteria.slice(0, 8).map(c => (
-                      <span key={c.id} className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold text-[10px]">
-                        ✓ {c.title}
-                      </span>
+                <div className="space-y-2">
+                  <div className="text-[11px] text-[var(--text-secondary)] font-medium">Критерии выбора компании ({criteria.length}):</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {criteria.map(c => (
+                      <div key={c.id} className="p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] flex items-start space-x-2">
+                        <span className={c.checked ? "text-emerald-500 font-bold" : "text-slate-400"}>
+                          {c.checked ? '✓' : '○'}
+                        </span>
+                        <div>
+                          <div className="font-bold text-[11px] text-[var(--text-primary)]">{c.title}</div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">{c.description}</div>
+                        </div>
+                      </div>
                     ))}
                     {criteria.length === 0 && <span className="text-[var(--text-secondary)]">Доска критериев пока пуста</span>}
                   </div>
                 </div>
               )}
 
+              {/* Step 4: Companies */}
               {currentStepNum === 4 && (
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <div className="text-[11px] text-[var(--text-secondary)] font-medium">Целевые компании ({companies.length}):</div>
-                  <div className="flex flex-wrap gap-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
                     {companies.map(c => (
-                      <span key={c.id} className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-[10px]">
-                        🏢 {c.name} ({c.country})
-                      </span>
+                      <div key={c.id} className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[11px] text-[var(--text-primary)]">🏢 {c.name}</span>
+                          <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[9px]">
+                            {c.tier}
+                          </span>
+                        </div>
+                        {c.techStack && c.techStack.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {c.techStack.map((t, i) => (
+                              <span key={i} className="px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-[9px] text-[var(--text-secondary)]">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {c.notes && <p className="text-[10px] text-[var(--text-secondary)] line-clamp-1">{c.notes}</p>}
+                      </div>
                     ))}
                     {companies.length === 0 && <span className="text-[var(--text-secondary)]">Список компаний пока пуст</span>}
                   </div>
                 </div>
               )}
 
+              {/* Step 5: Vacancies */}
               {currentStepNum === 5 && (
-                <div className="space-y-1">
-                  <div className="text-[11px] text-[var(--text-secondary)] font-medium">Отслеживаемые вакансии ({vacancies.length}):</div>
-                  <div className="flex flex-wrap gap-1">
+                <div className="space-y-2">
+                  <div className="text-[11px] text-[var(--text-secondary)] font-medium">Отслеживаемые вакансии в ATS трекере ({vacancies.length}):</div>
+                  <div className="space-y-2 max-h-56 overflow-y-auto">
                     {vacancies.map(v => (
-                      <span key={v.id} className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 font-semibold text-[10px]">
-                        💼 {v.company}: {v.title}
-                      </span>
+                      <div key={v.id} className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] flex items-center justify-between gap-2">
+                        <div>
+                          <div className="font-bold text-[11px] text-[var(--text-primary)]">{v.company}: {v.title}</div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">{v.salaryRange} • {v.location}</div>
+                        </div>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          v.status === 'Applied' ? 'bg-blue-500/10 text-blue-600' :
+                          v.status === 'Interview' ? 'bg-amber-500/10 text-amber-600' :
+                          v.status === 'Offer' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200 text-slate-600'
+                        }`}>
+                          {v.status}
+                        </span>
+                      </div>
                     ))}
                     {vacancies.length === 0 && <span className="text-[var(--text-secondary)]">Список вакансий пока пуст</span>}
                   </div>
                 </div>
               )}
 
-              {![3, 4, 5].includes(currentStepNum) && (
-                <div className="text-[11px] text-[var(--text-secondary)]">
-                  Сводный контекст: {criteria.length} критериев, {companies.length} компаний, {vacancies.length} вакансий. Все данные синхронизированы.
+              {/* Step 6: Newsletters */}
+              {currentStepNum === 6 && (
+                <div className="space-y-2">
+                  <div className="text-[11px] text-[var(--text-secondary)] font-medium">Карьерные рассылки и каналы ({newsletters.length}):</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {newsletters.map(n => (
+                      <div key={n.id} className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[11px] text-[var(--text-primary)]">📩 {n.name}</span>
+                          <span className="px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold text-[9px]">
+                            {n.platform}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-[var(--text-secondary)]">{n.frequency} • {n.category}</div>
+                      </div>
+                    ))}
+                    {newsletters.length === 0 && <span className="text-[var(--text-secondary)]">Список рассылок пока пуст</span>}
+                  </div>
                 </div>
               )}
+
+              {/* Step 7: SWOT Analysis & Vacancy Requirements */}
+              {currentStepNum === 7 && (
+                <div className="space-y-3">
+                  <div className="text-[11px] text-[var(--text-secondary)] font-medium">Факторы SWOT-матрицы ({swotCount}) & Выписки ({analyses.length}):</div>
+                  
+                  {/* SWOT Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">
+                        Сильные стороны ({state.swot?.strengths?.length || 0})
+                      </span>
+                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
+                        {(state.swot?.strengths || []).slice(0, 3).map((s, i) => (
+                          <li key={i} className="truncate">{s}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                      <span className="font-bold text-rose-600 dark:text-rose-400 block mb-1">
+                        Слабые стороны ({state.swot?.weaknesses?.length || 0})
+                      </span>
+                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
+                        {(state.swot?.weaknesses || []).slice(0, 3).map((w, i) => (
+                          <li key={i} className="truncate">{w}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                      <span className="font-bold text-blue-600 dark:text-blue-400 block mb-1">
+                        Возможности ({state.swot?.opportunities?.length || 0})
+                      </span>
+                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
+                        {(state.swot?.opportunities || []).slice(0, 3).map((o, i) => (
+                          <li key={i} className="truncate">{o}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                      <span className="font-bold text-amber-600 dark:text-amber-400 block mb-1">
+                        Угрозы ({state.swot?.threats?.length || 0})
+                      </span>
+                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
+                        {(state.swot?.threats || []).slice(0, 3).map((t, i) => (
+                          <li key={i} className="truncate">{t}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Vacancy Analyses Summary */}
+                  {analyses.length > 0 && (
+                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] space-y-1">
+                      <span className="font-bold text-[11px] text-[var(--text-primary)]">
+                        Выписано требований из вакансий: {analyses.length}
+                      </span>
+                      <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
+                        {analyses.map(a => (
+                          <span key={a.id} className="px-2 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 text-[10px] font-semibold">
+                            {a.item} ({a.status === 'owned' ? '✓ Владею' : '✕ Требует изучения'})
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Step 8: Final Report */}
+              {currentStepNum === 8 && (
+                <div className="space-y-3">
+                  <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-2">
+                    <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs flex items-center space-x-1.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Все данные профиля и досок синхронизированы и готовы к экспорту:</span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                      <div className="p-2 bg-[var(--bg-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--text-secondary)] block text-[10px]">Доска №1 (Критерии)</span>
+                        <span className="font-bold text-[var(--text-primary)]">{criteria.length} элементов</span>
+                      </div>
+                      <div className="p-2 bg-[var(--bg-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--text-secondary)] block text-[10px]">Доска №2 (Компании)</span>
+                        <span className="font-bold text-[var(--text-primary)]">{companies.length} компаний</span>
+                      </div>
+                      <div className="p-2 bg-[var(--bg-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--text-secondary)] block text-[10px]">Доска №3 (Вакансии)</span>
+                        <span className="font-bold text-[var(--text-primary)]">{vacancies.length} вакансий</span>
+                      </div>
+                      <div className="p-2 bg-[var(--bg-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--text-secondary)] block text-[10px]">Карьерные рассылки</span>
+                        <span className="font-bold text-[var(--text-primary)]">{newsletters.length} каналов</span>
+                      </div>
+                      <div className="p-2 bg-[var(--bg-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--text-secondary)] block text-[10px]">Таблица Анализ вакансий</span>
+                        <span className="font-bold text-[var(--text-primary)]">{analyses.length} требований</span>
+                      </div>
+                      <div className="p-2 bg-[var(--bg-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--text-secondary)] block text-[10px]">SWOT Факторы</span>
+                        <span className="font-bold text-[var(--text-primary)]">{swotCount} факторов</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
 
             {/* Detailed Purpose of current step */}
