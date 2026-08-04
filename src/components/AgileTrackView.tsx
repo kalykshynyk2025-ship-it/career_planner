@@ -477,65 +477,117 @@ export const AgileTrackView: React.FC<AgileTrackViewProps> = ({
               {/* Step 7: SWOT Analysis & Vacancy Requirements */}
               {currentStepNum === 7 && (
                 <div className="space-y-3">
-                  <div className="text-[11px] text-[var(--text-secondary)] font-medium">Факторы SWOT-матрицы ({swotCount}) & Выписки ({analyses.length}):</div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-[11px] text-[var(--text-secondary)] font-medium">
+                      Факторы SWOT-матрицы ({swotCount}) & Выписки из вакансий ({analyses.length}):
+                    </div>
+                  </div>
                   
-                  {/* SWOT Grid */}
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                      <span className="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">
-                        Сильные стороны ({state.swot?.strengths?.length || 0})
-                      </span>
-                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
-                        {(state.swot?.strengths || []).slice(0, 3).map((s, i) => (
-                          <li key={i} className="truncate">{s}</li>
+                  {/* SWOT Grid with full scrollable lists */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                    {/* Strengths */}
+                    <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                          💪 Strengths / Сильные стороны ({state.swot?.strengths?.length || 0})
+                        </span>
+                      </div>
+                      <ul className="list-disc list-inside space-y-1 text-[10px] text-[var(--text-primary)] max-h-48 overflow-y-auto">
+                        {(state.swot?.strengths || []).map((s, i) => (
+                          <li key={i} className="leading-tight">{s}</li>
                         ))}
+                        {(!state.swot?.strengths || state.swot.strengths.length === 0) && (
+                          <li className="text-[var(--text-secondary)] list-none italic">Нет записей. Добавьте в Анализе навыков.</li>
+                        )}
                       </ul>
                     </div>
-                    <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
-                      <span className="font-bold text-rose-600 dark:text-rose-400 block mb-1">
-                        Слабые стороны ({state.swot?.weaknesses?.length || 0})
-                      </span>
-                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
-                        {(state.swot?.weaknesses || []).slice(0, 3).map((w, i) => (
-                          <li key={i} className="truncate">{w}</li>
+
+                    {/* Weaknesses */}
+                    <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-rose-600 dark:text-rose-400">
+                          ⚠️ Weaknesses / Слабые стороны ({state.swot?.weaknesses?.length || 0})
+                        </span>
+                      </div>
+                      <ul className="list-disc list-inside space-y-1 text-[10px] text-[var(--text-primary)] max-h-48 overflow-y-auto">
+                        {(state.swot?.weaknesses || []).map((w, i) => (
+                          <li key={i} className="leading-tight">{w}</li>
                         ))}
+                        {(!state.swot?.weaknesses || state.swot.weaknesses.length === 0) && (
+                          <li className="text-[var(--text-secondary)] list-none italic">Нет записей. Добавьте в Анализе навыков.</li>
+                        )}
                       </ul>
                     </div>
-                    <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                      <span className="font-bold text-blue-600 dark:text-blue-400 block mb-1">
-                        Возможности ({state.swot?.opportunities?.length || 0})
-                      </span>
-                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
-                        {(state.swot?.opportunities || []).slice(0, 3).map((o, i) => (
-                          <li key={i} className="truncate">{o}</li>
+
+                    {/* Opportunities */}
+                    <div className="p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-blue-600 dark:text-blue-400">
+                          🚀 Opportunities / Возможности ({state.swot?.opportunities?.length || 0})
+                        </span>
+                      </div>
+                      <ul className="list-disc list-inside space-y-1 text-[10px] text-[var(--text-primary)] max-h-48 overflow-y-auto">
+                        {(state.swot?.opportunities || []).map((o, i) => (
+                          <li key={i} className="leading-tight">{o}</li>
                         ))}
+                        {(!state.swot?.opportunities || state.swot.opportunities.length === 0) && (
+                          <li className="text-[var(--text-secondary)] list-none italic">Нет записей. Добавьте в Анализе навыков.</li>
+                        )}
                       </ul>
                     </div>
-                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                      <span className="font-bold text-amber-600 dark:text-amber-400 block mb-1">
-                        Угрозы ({state.swot?.threats?.length || 0})
-                      </span>
-                      <ul className="list-disc list-inside space-y-0.5 text-[10px] text-[var(--text-primary)]">
-                        {(state.swot?.threats || []).slice(0, 3).map((t, i) => (
-                          <li key={i} className="truncate">{t}</li>
+
+                    {/* Threats */}
+                    <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-amber-600 dark:text-amber-400">
+                          🛡️ Threats / Угрозы ({state.swot?.threats?.length || 0})
+                        </span>
+                      </div>
+                      <ul className="list-disc list-inside space-y-1 text-[10px] text-[var(--text-primary)] max-h-48 overflow-y-auto">
+                        {(state.swot?.threats || []).map((t, i) => (
+                          <li key={i} className="leading-tight">{t}</li>
                         ))}
+                        {(!state.swot?.threats || state.swot.threats.length === 0) && (
+                          <li className="text-[var(--text-secondary)] list-none italic">Нет записей. Добавьте в Анализе навыков.</li>
+                        )}
                       </ul>
                     </div>
                   </div>
 
                   {/* Vacancy Analyses Summary */}
-                  {analyses.length > 0 && (
-                    <div className="p-2.5 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] space-y-1">
-                      <span className="font-bold text-[11px] text-[var(--text-primary)]">
-                        Выписано требований из вакансий: {analyses.length}
-                      </span>
-                      <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
-                        {analyses.map(a => (
-                          <span key={a.id} className="px-2 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 text-[10px] font-semibold">
-                            {a.item} ({a.status === 'owned' ? '✓ Владею' : '✕ Требует изучения'})
-                          </span>
-                        ))}
+                  {analyses.length > 0 ? (
+                    <div className="p-3 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-[11px] text-[var(--text-primary)]">
+                          Декомпозиция требований из вакансий ({analyses.length} записей):
+                        </span>
                       </div>
+                      <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
+                        {analyses.map(a => {
+                          const isOwned = a.status === 'Владею' || a.status === 'owned';
+                          const isPartial = a.status === 'Частично' || a.status === 'partial';
+                          return (
+                            <span 
+                              key={a.id} 
+                              className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
+                                isOwned 
+                                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' 
+                                  : isPartial
+                                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                                    : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+                              }`}
+                            >
+                              {a.company ? `${a.company}: ` : ''}{a.item} ({
+                                isOwned ? '✓ Владею' : isPartial ? '◐ Частично' : '✕ Требует изучения'
+                              })
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-lg bg-[var(--bg-card)] border border-[var(--color-border)] text-[10px] text-[var(--text-secondary)]">
+                      Таблица требований вакансий пока пуста. Добавьте записи во вкладке «Анализ вакансий».
                     </div>
                   )}
                 </div>
